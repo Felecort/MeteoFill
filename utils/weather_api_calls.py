@@ -12,7 +12,7 @@ def get_weather(params: Dict=None) -> pd.DataFrame:
     """
     Return DataFrame that contains weather parameters for every day or hour.
     For more information see https://open-meteo.com/en/docs
-    
+
     Params example:
     --------
         >>> params = {
@@ -38,10 +38,9 @@ def get_weather(params: Dict=None) -> pd.DataFrame:
 
 
     """ Setup the Open-Meteo API client with cache and retry on error"""
-
-    # cache_session = requests_cache.CachedSession('.cache', expire_after = 3600)
-    # retry_session = retry(cache_session, retries = 5, backoff_factor = 0.2)
-    openmeteo = openmeteo_requests.Client()
+    cache_session = requests_cache.CachedSession('.cache', backend="filesystem", serializer="json", expire_after=3600)
+    retry_session = retry(cache_session, retries=5, backoff_factor=1)
+    openmeteo = openmeteo_requests.Client(session=retry_session)
     responses = openmeteo.weather_api(url, params=params)
 
     response = responses[0]
