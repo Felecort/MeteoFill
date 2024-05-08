@@ -51,7 +51,7 @@ def get_weather(params: Dict=None) -> pd.DataFrame:
         result = response.Daily()
         freq_type = "daily"
     else:
-        raise KeyError, "Absent  or unknown frequency type. Supporn only ['hourly', 'daily]. https://open-meteo.com/en/docs"
+        raise KeyError("Absent  or unknown frequency type. Supporn only ['hourly', 'daily]. https://open-meteo.com/en/docs")
 
     # Create timestamp column
     data = {"date": pd.date_range(
