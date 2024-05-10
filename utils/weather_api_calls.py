@@ -67,6 +67,7 @@ def get_weather(params: Dict=None) -> pd.DataFrame:
 
     # conver to DataFrame
     hourly_dataframe = pd.DataFrame(data=data)
+    hourly_dataframe.set_index("date", drop=True, inplace=True)
 
     return hourly_dataframe
 
