@@ -4,7 +4,10 @@ import pandas as pd
 
 def create_nan(data: pd.DataFrame, prob: float=0.5) -> pd.DataFrame:
     """
-    Create Nans in input data
+    Create Nans in input data    
+    
+    Parameters
+    ----------
     - `data` - input pandas DataFrame
     - `prob` - probabilyli that each sample will be replaced by Nan
     """
