@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 
 
-
 def create_nan(data: pd.DataFrame, prob: float=0.5) -> pd.DataFrame:
     """
     Create Nans in input data
