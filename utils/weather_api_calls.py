@@ -30,7 +30,7 @@ def get_weather(params: Dict=None) -> pd.DataFrame:
             "latitude": -74.0411, # North Pole
             "longitude": 51.4071, # North Pole
             "start_date": "2021-07-01",
-            "end_date": "2021-07-10",
+            "end_date": "2021-07-02",
             "hourly": ["temperature_2m", "relative_humidity_2m", "surface_pressure", "wind_speed_10m", "wind_direction_10m"], # Our params
             "timeformat": "unixtime"
         }
@@ -45,8 +45,8 @@ def get_weather(params: Dict=None) -> pd.DataFrame:
 
     response = responses[0]
     if "hourly" in params.keys():
-        freq_type = "hourly"
         result = response.Hourly()
+        freq_type = "hourly"
     elif "daily" in params.keys():
         result = response.Daily()
         freq_type = "daily"
@@ -66,10 +66,9 @@ def get_weather(params: Dict=None) -> pd.DataFrame:
         data[param] = result.Variables(i).ValuesAsNumpy()
 
     # conver to DataFrame
-    hourly_dataframe = pd.DataFrame(data=data)
-    hourly_dataframe.set_index("date", drop=True, inplace=True)
+    df = pd.DataFrame(data=data)
 
-    return hourly_dataframe
+    return df.set_index("date", drop=True)
 
 
 if __name__ == "__main__":
