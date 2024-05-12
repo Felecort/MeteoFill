@@ -10,12 +10,12 @@ services:
       - "5672:5672"
     volumes:
       - ./app:/app
-    environment:
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
-      POSTGRES_DB: mydb
-      RABBITMQ_DEFAULT_USER: rabbitmquser
-      RABBITMQ_DEFAULT_PASS: rabbitmqpassword
+    # environment:
+    #   POSTGRES_USER: myuser
+    #   POSTGRES_PASSWORD: mypassword
+    #   POSTGRES_DB: mydb
+    #   RABBITMQ_DEFAULT_USER: rabbitmquser
+    #   RABBITMQ_DEFAULT_PASS: rabbitmqpassword
     depends_on:
       - postgres
       - rabbitmq
@@ -23,9 +23,10 @@ services:
   postgres:
     image: postgres:latest
     environment:
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
-      POSTGRES_DB: mydb
+      - .env
+      # POSTGRES_USER: myuser
+      # POSTGRES_PASSWORD: mypassword
+      # POSTGRES_DB: mydb
 
   rabbitmq:
     image: rabbitmq:latest
