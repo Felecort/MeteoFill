@@ -23,10 +23,10 @@ services:
   postgres:
     image: postgres:latest
     environment:
-      - .env
-      # POSTGRES_USER: myuser
-      # POSTGRES_PASSWORD: mypassword
-      # POSTGRES_DB: mydb
+      # - .env
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydb
 
   rabbitmq:
     image: rabbitmq:latest
