@@ -10,7 +10,7 @@ services:
       # - "5432:5432"
       # - "5672:5672"
     volumes:
-      - ./app:/app
+      - .:/app
     # environment:
     #   POSTGRES_USER: myuser
     #   POSTGRES_PASSWORD: mypassword
