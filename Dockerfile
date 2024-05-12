@@ -22,4 +22,4 @@ RUN tree
 # EXPOSE 5432 5672
 
 # CMD ["python", "../main.py"]
-CMD ["python", "-c", "exec('ls')"]
+CMD ["python", "-c", "import os; os.system('ls')"]
