@@ -6,8 +6,9 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "5432:5432"
-      - "5672:5672"
+      - "8000:8000"
+      # - "5432:5432"
+      # - "5672:5672"
     volumes:
       - ./app:/app
     # environment:
@@ -22,6 +23,8 @@ services:
 
   postgres:
     image: postgres:latest
+    ports:
+      - "5432:5432"
     environment:
       # - .env
       POSTGRES_USER: postgres
@@ -30,6 +33,8 @@ services:
 
   rabbitmq:
     image: rabbitmq:latest
+    ports:
+      - "5672:5672"
     environment:
       RABBITMQ_DEFAULT_USER: rabbitmquser
       RABBITMQ_DEFAULT_PASS: rabbitmqpassword
