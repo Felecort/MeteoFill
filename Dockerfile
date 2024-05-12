@@ -16,7 +16,7 @@ COPY --from=builder /usr/local/lib/python3.10/site-packages/ /usr/local/lib/pyth
 
 WORKDIR /app
 
-COPY . .
+COPY . /app
 
 # EXPOSE 5432 5672
 
