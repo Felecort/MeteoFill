@@ -20,4 +20,4 @@ COPY . .
 
 EXPOSE 5432 5672
 
-CMD ["python", "main.py"]
+CMD ["python", "endpoint/main.py"]
