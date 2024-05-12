@@ -18,6 +18,6 @@ WORKDIR /app
 
 COPY . .
 
-EXPOSE 5432 5672
+# EXPOSE 5432 5672
 
 CMD ["python", "endpoint/main.py"]
