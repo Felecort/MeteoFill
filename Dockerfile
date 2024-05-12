@@ -16,9 +16,10 @@ COPY --from=builder /usr/local/lib/python3.10/site-packages/ /usr/local/lib/pyth
 
 WORKDIR /app
 
-COPY . /app/
+COPY . /app
 RUN tree 
 
 # EXPOSE 5432 5672
 
-CMD ["python", "main.py"]
+# CMD ["python", "../main.py"]
+CMD ["python", "-c", "exec('ls')"]
