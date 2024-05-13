@@ -11,7 +11,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     rabbitmq-server \
     tree \
  && rm -rf /var/lib/apt/lists/*
-
+# RUN rabbitmq-plugins enable rabbitmq_management
+RUN rabbitmq-plugins enable --offline rabbitmq_management
 COPY --from=builder /usr/local/lib/python3.10/site-packages/ /usr/local/lib/python3.10/site-packages/
 
 COPY . .
