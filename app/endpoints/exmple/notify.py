@@ -1,4 +1,5 @@
-import json 
+import json
+from time import sleep
 import pika
 
 connection = pika.BlockingConnection(pika.ConnectionParameters("localhost"))
@@ -18,6 +19,7 @@ def callback(ch, method, properties, body):
     playload = json.loads(body)
     print(f"[x] Notifying {playload['user_email']}")
     print(f"[x] Done")
+    sleep(5)
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
 
