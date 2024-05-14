@@ -99,4 +99,4 @@ def update_charts(n_intervals):
     return temp_chart, pressure_chart, humidity_chart, wind_speed_chart, wind_direction_chart, df.to_dict('records')
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(host="0.0.0.0", debug=True)
