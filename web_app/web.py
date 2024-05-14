@@ -24,7 +24,7 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 app.title = "Данные метеостанции!"
 
 # Загрузка JSON (в дальнейшем будет api запрос)
-with open('D:\Meteo stanshin\MeteoFill\web_app\Шаблон_ответа_на_запрос_данных_для_визуализации.json', 'r') as f:
+with open('Шаблон_ответа_на_запрос_данных_для_визуализации.json', 'r') as f:
     data = json.load(f)
 
 # Макет приложения
