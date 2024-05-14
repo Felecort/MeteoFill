@@ -1,6 +1,7 @@
 import pika
 import json
-
+from time import sleep
+sleep(10)
 # Function to be called with the received data
 def process_data(data):
     print("Received Data:")
@@ -8,7 +9,9 @@ def process_data(data):
         print(f"Name: {person['name']}, Age: {person['age']}")
 
 # Connect to RabbitMQ server running on localhost
-connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+credentials = pika.PlainCredentials('guest', 'guest')
+
+connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq', credentials=credentials))
 channel = connection.channel()
 
 # Declare a queue named 'data_queue'
