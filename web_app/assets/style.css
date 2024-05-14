@@ -47,44 +47,5 @@ body {
 
 .table {
     margin-bottom: 24px;
-    box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.1); /* Уменьшаем прозрачность тени */
-    background-color: #f9f9f9; /* Добавляем светлый фон */
-    border-radius: 8px; /* Скругляем углы */
-    transition: box-shadow 0.3s ease; /* Добавляем эффект перехода для тени */
-}
-
-.table:hover {
-    box-shadow: 0 8px 12px 0 rgba(0, 0, 0, 0.15); /* Увеличиваем тень при наведении курсора */
-}
-
-
-
-.menu {
-    height: 112px;
-    width: 912px;
-    display: flex;
-    justify-content: space-evenly;
-    padding-top: 24px;
-    margin: -80px auto 0 auto;
-    background-color: #FFFFFF;
-    box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.18);
-}
-
-.Select-control {
-    width: 256px;
-    height: 48px;
-}
-
-.Select--single > .Select-control .Select-value, .Select-placeholder {
-    line-height: 48px;
-}
-
-.Select--multi .Select-value-label {
-    line-height: 32px;
-}
-
-.menu-title {
-    margin-bottom: 6px;
-    font-weight: bold;
-    color: #079A82;
+    box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.1);
 }
