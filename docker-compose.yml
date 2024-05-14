@@ -7,10 +7,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
-      # - "5432:5432"
-      # - "5672:5672"
     volumes:
-      - ./:/app
+      - ./backend:/backend
     # environment:
     #   POSTGRES_USER: myuser
     #   POSTGRES_PASSWORD: mypassword
@@ -26,7 +24,7 @@ services:
       context: ./web_app
       dockerfile: Dockerfile
     ports:
-      - "8050:8050"  # Пример портов для веб-приложения. Измените, если нужно.
+      - "8050:8050" # Пример портов для веб-приложения. Измените, если нужно.
     volumes:
       - ./web_app:/web_app # Монтируем каталог с веб-приложением в контейнер
     depends_on:
@@ -49,8 +47,6 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
-    # ports:
-    #   - "5672:5672"
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
