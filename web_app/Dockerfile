@@ -2,7 +2,7 @@ FROM python:3.10
 
 # Like requirements
 COPY req.txt .
-RUN pip install --no-cache-dir -r req.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 WORKDIR /web_app
 
