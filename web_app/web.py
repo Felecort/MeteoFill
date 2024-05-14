@@ -1,14 +1,19 @@
+import layout
 import dash
+import dash.dash_table as dt
 from dash import dcc
 from dash import html
+from dash.dependencies import Input, Output, State
+
+from json_pars import parsing
+import json
+
 import pandas as pd
 import plotly.graph_objs as go
-from dash.dependencies import Input, Output, State
-import time
-import dash.dash_table as dt
-import json
-from json_pars import parsing
-import layout
+
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
+
 
 # Инициализация приложения Dash
 external_stylesheets = [
@@ -24,7 +29,7 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 app.title = "Данные метеостанции!"
 
 # Загрузка JSON (в дальнейшем будет api запрос)
-with open('Шаблон_ответа_на_запрос_данных_для_визуализации.json', 'r') as f:
+with open('response_example.json', 'r') as f:
     data = json.load(f)
 
 # Макет приложения
