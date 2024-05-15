@@ -9,11 +9,8 @@ channel = connection.channel()
 channel.queue_declare(queue='data_queue')
 
 # Sample dataset
-dataset = [
-    {"name": "Alice", "age": 30},
-    {"name": "Bob", "age": 25},
-    {"name": "Charlie", "age": 35}
-]
+with open('/home/vadim/projects/MeteoFill/backend/src/responce_example.json', 'r') as f:
+    dataset = json.load(f)
 
 # Convert dataset to JSON and send it to the 'data_queue'
 channel.basic_publish(exchange='',
