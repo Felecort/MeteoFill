@@ -8,4 +8,4 @@ WORKDIR /web_app
 
 EXPOSE 8050
 
-CMD ["python", "-u", "web.py"]
+CMD ["python", "-u", "main.py"]
