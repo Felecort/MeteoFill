@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 from sklearn.impute import KNNImputer
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import root_mean_squared_error
 
 def create_nan(data: pd.DataFrame, prob: float=0.5) -> pd.DataFrame:
     """
@@ -84,4 +84,5 @@ def calculate_rmse(original_df: pd.DataFrame, filled_df: pd.DataFrame) -> float:
     filled_df - dataframe с заполненными пропусками
     """
     numeric_columns = original_df.select_dtypes(include=np.number).columns
-    return np.sqrt(mean_squared_error(original_df[numeric_columns].values.ravel(), filled_df[numeric_columns].values.ravel()))
+    return root_mean_squared_error(original_df[numeric_columns].values.ravel(), filled_df[numeric_columns].values.ravel())
+    # return np.sqrt(mean_squared_error(original_df[numeric_columns].values.ravel(), filled_df[numeric_columns].values.ravel()))
