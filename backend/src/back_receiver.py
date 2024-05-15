@@ -5,7 +5,7 @@ import pandas as pd
 from datetime import datetime
 from  nans_handler import fill_missing_values, create_nan, calculate_rmse
 from time import sleep
-sleep(7)
+sleep(10)
 
 
 def calculate_timestamps(start_timestamp: datetime, end_timestamp: datetime, delay: int) -> pd.DatetimeIndex:
@@ -30,23 +30,24 @@ channel.queue_declare(queue='data_queue')
 
 # Define a callback function to process received messages
 def callback(ch, method, properties, body):
-    json_data = json.loads(body)
-    start_timestamp = datetime.fromisoformat(json_data["timestamps"]["start"])
-    end_timestamp = datetime.fromisoformat(json_data["timestamps"]["end"])
-    delay = json_data["delay"]
-    timestamps = calculate_timestamps(start_timestamp, end_timestamp, delay)
+    print(" [X] BACK | HELLO FROM BACK")
+    # json_data = json.loads(body)
+    # start_timestamp = datetime.fromisoformat(json_data["timestamps"]["start"])
+    # end_timestamp = datetime.fromisoformat(json_data["timestamps"]["end"])
+    # delay = json_data["delay"]
+    # timestamps = calculate_timestamps(start_timestamp, end_timestamp, delay)
 
-    data = {
-        json_data["data"][i]["id"]: json_data["data"][i]["values"] for i in range(len(json_data["data"]))
-    }
-    data["date"] = timestamps
+    # data = {
+    #     json_data["data"][i]["id"]: json_data["data"][i]["values"] for i in range(len(json_data["data"]))
+    # }
+    # data["date"] = timestamps
 
-    df = pd.DataFrame(data)
-    df.set_index("date", drop=True, inplace=True)
-    df_filled_nans = fill_missing_values(df)
+    # df = pd.DataFrame(data)
+    # df.set_index("date", drop=True, inplace=True)
+    # df_filled_nans = fill_missing_values(df)
 
-    print(f" [x] Dataset:")
-    print(df_filled_nans)
+    # print(f" [x] Dataset:")
+    # print(df_filled_nans)
 
 
 # Consume messages from the 'data_queue'

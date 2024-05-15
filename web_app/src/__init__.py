@@ -1,2 +1,2 @@
 from .web import*
-from .receiver import*
+from .front_receiver import*

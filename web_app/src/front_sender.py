@@ -6,7 +6,7 @@ connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
 channel = connection.channel()
 
 # Declare a queue named 'data_queue'
-channel.queue_declare(queue='data_queue')
+channel.queue_declare(queue='gui_queue')
 
 # Sample dataset
 with open('/home/vadim/projects/MeteoFill/backend/src/responce_example.json', 'r') as f:
@@ -14,8 +14,8 @@ with open('/home/vadim/projects/MeteoFill/backend/src/responce_example.json', 'r
 
 # Convert dataset to JSON and send it to the 'data_queue'
 channel.basic_publish(exchange='',
-                      routing_key='data_queue',
+                      routing_key='gui_queue',
                       body=json.dumps(dataset))
-print(" [x] Dataset Sent")
+print(" [X] FRONT | Dataset Sent")
 
 connection.close()
