@@ -1,14 +1,19 @@
+import layout
 import dash
+import dash.dash_table as dt
 from dash import dcc
 from dash import html
+from dash.dependencies import Input, Output, State
+
+from json_pars import parsing
+import json
+
 import pandas as pd
 import plotly.graph_objs as go
-from dash.dependencies import Input, Output, State
-import time
-import dash.dash_table as dt
-import json
-from json_pars import parsing
-import layout
+
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
+
 
 # Инициализация приложения Dash
 external_stylesheets = [
@@ -24,7 +29,7 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 app.title = "Данные метеостанции!"
 
 # Загрузка JSON (в дальнейшем будет api запрос)
-with open('D:\Meteo stanshin\MeteoFill\web_app\Шаблон_ответа_на_запрос_данных_для_визуализации.json', 'r') as f:
+with open('response_example.json', 'r') as f:
     data = json.load(f)
 
 # Макет приложения
@@ -58,7 +63,7 @@ def update_charts(n_intervals):
     temp_chart.add_trace(go.Scatter(x=df['time'], y=df['temperature_after'], mode='lines', name='Восстановленные данные', line=dict(color='red')))
     temp_chart.add_trace(go.Scatter(x=df['time'], y=df['temperature_before'], mode='lines+markers', name='Полученные данные', line=dict(color='blue')))
     temp_chart.update_layout(
-        xaxis_tickformat='%Y-%m-%dT%H:%M',
+        xaxis_tickformat='%Y-%m-%d %H:%M',
         title='Температура'
     )
 
@@ -66,7 +71,7 @@ def update_charts(n_intervals):
     pressure_chart.add_trace(go.Scatter(x=df['time'], y=df['pressure_after'], mode='lines', name='Восстановленные данные', line=dict(color='red')))
     pressure_chart.add_trace(go.Scatter(x=df['time'], y=df['pressure_before'], mode='lines+markers', name='Полученные данные', line=dict(color='blue')))
     pressure_chart.update_layout(
-        xaxis_tickformat='%Y-%m-%dT%H:%M',
+        xaxis_tickformat='%Y-%m-%d %H:%M',
         title='Давление'
     )
 
@@ -74,7 +79,7 @@ def update_charts(n_intervals):
     humidity_chart.add_trace(go.Scatter(x=df['time'], y=df['humidity_after'], mode='lines', name='Восстановленные данные', line=dict(color='red')))
     humidity_chart.add_trace(go.Scatter(x=df['time'], y=df['humidity_before'], mode='lines+markers', name='Полученные данные', line=dict(color='blue')))
     humidity_chart.update_layout(
-        xaxis_tickformat='%Y-%m-%dT%H:%M',
+        xaxis_tickformat='%Y-%m-%d %H:%M',
         title='Влажность'
     )
 
@@ -82,7 +87,7 @@ def update_charts(n_intervals):
     wind_speed_chart.add_trace(go.Scatter(x=df['time'], y=df['wind_speed_after'], mode='lines', name='Восстановленные данные', line=dict(color='red')))
     wind_speed_chart.add_trace(go.Scatter(x=df['time'], y=df['wind_speed_before'], mode='lines+markers', name='Полученные данные', line=dict(color='blue')))
     wind_speed_chart.update_layout(
-        xaxis_tickformat='%Y-%m-%dT%H:%M',
+        xaxis_tickformat='%Y-%m-%d %H:%M',
         title='Скорость ветра'
     )
 
@@ -90,7 +95,7 @@ def update_charts(n_intervals):
     wind_direction_chart.add_trace(go.Scatter(x=df['time'], y=df['wind_direction_after'], mode='lines', name='Востоновленные данные', line=dict(color='red')))
     wind_direction_chart.add_trace(go.Scatter(x=df['time'], y=df['wind_direction_before'], mode='lines+markers', name='Полученные данные', line=dict(color='blue')))
     wind_direction_chart.update_layout(
-        xaxis_tickformat='%Y-%m-%dT%H:%M',
+        xaxis_tickformat='%Y-%m-%d %H:%M',
         title='Направление ветра'
     )
 
@@ -99,4 +104,4 @@ def update_charts(n_intervals):
     return temp_chart, pressure_chart, humidity_chart, wind_speed_chart, wind_direction_chart, df.to_dict('records')
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(host="0.0.0.0", debug=True)
