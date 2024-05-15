@@ -3,9 +3,13 @@ FROM python:3.10
 # Like requirements
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    tree
 
+COPY . ./web_app
 WORKDIR /web_app
 
 EXPOSE 8050
 
 CMD ["python", "-u", "main.py"]
+# CMD ["python", "-u", "-c", "import os; os.system('tree -L 1')"]
