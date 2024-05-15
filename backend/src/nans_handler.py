@@ -54,7 +54,7 @@ def fill_missing_values(data: pd.DataFrame) -> pd.DataFrame:
     используя соседние известные значения и информацию o времени.
     """
 
-    data['date'] = pd.to_datetime(data['date'])
+    # data['date'] = pd.to_datetime(data['date'])
     data = data.set_index('date')
     data = data.interpolate(method='time', limit_direction='both')
 
