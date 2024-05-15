@@ -1,0 +1,31 @@
+{
+    "timestamps":
+    {
+        "start": "01-01-24T00:00:00",
+        "end": "01-01-24T00:30:00"
+    },
+    "delay": 900,
+    "data": 
+    [
+        {
+            "name": "Температура",
+            "id": "temperature_2m", 
+            "values": 
+            [
+                -10,
+                null,
+                -11
+            ]
+        },
+        {
+            "name": "Скорость ветра",
+            "id": "wind_speed",
+            "values":
+            [
+                null,
+                5,
+                7
+            ]
+        }
+    ]
+}
