@@ -22,4 +22,4 @@ WORKDIR /backend
 # EXPOSE 5432 5672
 
 # CMD ["python",  "-c", "import os; print(os.system('tree -L 4'))"]
-CMD ["python", "-u", "exmple/send_receive/receiver.py"]
+CMD ["python", "-u", "receiver.py"]
