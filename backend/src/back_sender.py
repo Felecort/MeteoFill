@@ -9,6 +9,8 @@ channel = connection.channel()
 channel.queue_declare(queue='data_queue')
 
 # Sample dataset
+import os
+os.system("pwd")
 with open('/home/vadim/projects/MeteoFill/backend/src/responce_example.json', 'r') as f:
     dataset = json.load(f)
 
@@ -16,6 +18,6 @@ with open('/home/vadim/projects/MeteoFill/backend/src/responce_example.json', 'r
 channel.basic_publish(exchange='',
                       routing_key='data_queue',
                       body=json.dumps(dataset))
-print(" [x] Dataset Sent")
+print(" [X] BACK | Dataset Sent")
 
 connection.close()
