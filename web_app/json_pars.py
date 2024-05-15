@@ -2,17 +2,16 @@ import pandas as pd
 from datetime import datetime, timedelta
 import json
 
-# Загрузка JSON
-#with open('Шаблон_ответа_на_запрос_данных_для_визуализации.json', 'r') as f:
-#    data = json.load(f)
 
 # Функция для расчета временных меток
-def calculate_timestamps(start_timestamp, end_timestamp, delay):
-    timestamps = []
-    current_timestamp = start_timestamp
-    while current_timestamp <= end_timestamp:
-        timestamps.append(current_timestamp)
-        current_timestamp += timedelta(seconds=delay)
+def calculate_timestamps(start_timestamp: datetime, end_timestamp: datetime, delay: int) -> pd.DatetimeIndex:
+    timestamps = pd.date_range(
+        start=start_timestamp,
+        end=end_timestamp,
+        # from nanoseconds to seconds
+        freq=pd.Timedelta(int(delay * 1e9)),
+        inclusive="left"
+    )
     return timestamps
 
 
@@ -47,7 +46,7 @@ def parsing (data):
             'humidity_after': data[0]['data'][4]['values']['after'][i]
         }
         df = pd.concat([df, pd.DataFrame([row])], ignore_index=True)
-        
+
     return df
 
 #print (parsing(data))
