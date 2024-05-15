@@ -22,4 +22,4 @@ WORKDIR /backend
 # EXPOSE 5432 5672
 
 # CMD ["python",  "-c", "import os; print(os.system('tree -L 4'))"]
-CMD ["python", "-u", "src/back_receiver.py"]
+CMD ["python", "-u", "main.py"]
