@@ -45,9 +45,8 @@ data_frame_presents = pd.DataFrame(columns=['time',
 
 # Заг(рузка JSON (в дальнейшем будет api запрос)
 
-print(os.system("pwd"))
-with open('response_example.json', 'r') as f:
-    data = json.load(f)
+# with open('response_example.json', 'r') as f:
+#     data = json.load(f)
 
 # Макет приложения
 app.layout = html.Div(children=[
@@ -71,8 +70,9 @@ app.layout = html.Div(children=[
      Output('data-table', 'data')],
     [Input('interval-component', 'n_intervals')]
 )
-
 def update_charts(n_intervals):
+    with open('response_example.json', 'r') as f:
+        data = json.load(f)
     # Создание датафрейма внутри функции
     #data_frame_presents = update_data(data,data_frame_presents)
     df = parsing(data)
