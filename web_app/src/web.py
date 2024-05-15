@@ -1,15 +1,18 @@
-import layout
+from .layout import*
 import dash
 import dash.dash_table as dt
 from dash import dcc
 from dash import html
 from dash.dependencies import Input, Output, State
 
-from json_pars import parsing
+from .json_pars import parsing
 import json
 
 import pandas as pd
 import plotly.graph_objs as go
+
+import os
+
 
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -28,20 +31,34 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 app.title = "Данные метеостанции!"
 
-# Загрузка JSON (в дальнейшем будет api запрос)
+data_frame_presents = pd.DataFrame(columns=['time',
+                                            'temperature_before',
+                                            'temperature_after',
+                                            'wind_speed_before',
+                                            'wind_speed_after',
+                                            'wind_direction_before',
+                                            'wind_direction_after',
+                                            'pressure_before',
+                                            'pressure_after',
+                                            'humidity_before',
+                                            'humidity_after'])
+
+# Заг(рузка JSON (в дальнейшем будет api запрос)
+
+print(os.system("pwd"))
 with open('response_example.json', 'r') as f:
     data = json.load(f)
 
 # Макет приложения
 app.layout = html.Div(children=[
-    layout.header(),
+    header(),
     dcc.Interval(
         id="interval-component",
         interval=500,  # в миллисекундах
         n_intervals=0
     ),
-    layout.charts(),
-    layout.data_table()
+    charts(),
+    data_table()
 ])
 
 # Обновление данных каждые 5 секунд
@@ -57,7 +74,9 @@ app.layout = html.Div(children=[
 
 def update_charts(n_intervals):
     # Создание датафрейма внутри функции
+    #data_frame_presents = update_data(data,data_frame_presents)
     df = parsing(data)
+
 
     temp_chart = go.Figure()
     temp_chart.add_trace(go.Scatter(x=df['time'], y=df['temperature_after'], mode='lines', name='Восстановленные данные', line=dict(color='red')))
