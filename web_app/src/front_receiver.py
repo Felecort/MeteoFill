@@ -3,8 +3,7 @@ from time import sleep
 
 
 def callback(ch, method, properties, body):
-        print(" [X] FRONT | HELLO FROM FRONT")
-
+    print(" [X] FRONT | HELLO FROM FRONT")
 
 
 def get_channel():
