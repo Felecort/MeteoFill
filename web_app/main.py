@@ -26,5 +26,3 @@ if __name__ == "__main__":
     # p1 = Process(target=app.run, kwargs={"host":"0.0.0.0", "debug":True})
     # p1.start()
     # # p2 = Process(target=channel.basic_consume, kwargs={"queue":"gui_queue", "on_message_callback":callback, "auto_ack":True})
-
-
