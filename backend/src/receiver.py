@@ -5,7 +5,7 @@ import pandas as pd
 from datetime import datetime
 from  nans_handler import fill_missing_values, create_nan, calculate_rmse
 from time import sleep
-sleep(10)
+sleep(7)
 
 
 def calculate_timestamps(start_timestamp: datetime, end_timestamp: datetime, delay: int) -> pd.DatetimeIndex:
@@ -37,17 +37,18 @@ channel.queue_declare(queue='data_queue')
 # Define a callback function to process received messages
 def callback(ch, method, properties, body):
     json_data = json.loads(body)
-    start_timestamp = datetime(json_data["timestamps"]["start"])
-    end_timestamp = json_data["timestamps"]["end"]
+    start_timestamp = datetime.fromisoformat(json_data["timestamps"]["start"])
+    end_timestamp = datetime.fromisoformat(json_data["timestamps"]["end"])
     delay = json_data["delay"]
     timestamps = calculate_timestamps(start_timestamp, end_timestamp, delay)
     
     data = {
         json_data["data"][i]["id"]: json_data["data"][i]["values"] for i in range(len(json_data["data"]))
     }
-    data["time"] = timestamps
+    data["date"] = timestamps
 
     df = pd.DataFrame(data)
+    df.set_index("date", drop=True, inplace=True)
     df_with_nans = create_nan(df)
     df_filled_nans = fill_missing_values(df_with_nans)
     print(f" [x] RMSE: {calculate_rmse(df, df_filled_nans)}")
