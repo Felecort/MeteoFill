@@ -19,12 +19,6 @@ def calculate_timestamps(start_timestamp: datetime, end_timestamp: datetime, del
     return timestamps
 
 
-# # Function to be called with the received data
-# def process_data(data):
-#     print("Received Data:")
-#     for person in data:
-#         print(f"Name: {person['name']}, Age: {person['age']}")
-
 # Connect to RabbitMQ server running on localhost
 credentials = pika.PlainCredentials('guest', 'guest')
 
@@ -41,7 +35,7 @@ def callback(ch, method, properties, body):
     end_timestamp = datetime.fromisoformat(json_data["timestamps"]["end"])
     delay = json_data["delay"]
     timestamps = calculate_timestamps(start_timestamp, end_timestamp, delay)
-    
+
     data = {
         json_data["data"][i]["id"]: json_data["data"][i]["values"] for i in range(len(json_data["data"]))
     }
@@ -49,10 +43,9 @@ def callback(ch, method, properties, body):
 
     df = pd.DataFrame(data)
     df.set_index("date", drop=True, inplace=True)
-    df_with_nans = create_nan(df)
-    df_filled_nans = fill_missing_values(df_with_nans)
-    print(f" [x] RMSE: {calculate_rmse(df, df_filled_nans)}")
+    df_filled_nans = fill_missing_values(df)
 
+    print(f" [x] Dataset:")
     print(df_filled_nans)
 
 
