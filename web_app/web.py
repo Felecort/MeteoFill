@@ -63,7 +63,7 @@ def update_charts(n_intervals):
     temp_chart.add_trace(go.Scatter(x=df['time'], y=df['temperature_after'], mode='lines', name='Восстановленные данные', line=dict(color='red')))
     temp_chart.add_trace(go.Scatter(x=df['time'], y=df['temperature_before'], mode='lines+markers', name='Полученные данные', line=dict(color='blue')))
     temp_chart.update_layout(
-        xaxis_tickformat='%Y-%m-%dT%H:%M',
+        xaxis_tickformat='%Y-%m-%d %H:%M',
         title='Температура'
     )
 
@@ -71,7 +71,7 @@ def update_charts(n_intervals):
     pressure_chart.add_trace(go.Scatter(x=df['time'], y=df['pressure_after'], mode='lines', name='Восстановленные данные', line=dict(color='red')))
     pressure_chart.add_trace(go.Scatter(x=df['time'], y=df['pressure_before'], mode='lines+markers', name='Полученные данные', line=dict(color='blue')))
     pressure_chart.update_layout(
-        xaxis_tickformat='%Y-%m-%dT%H:%M',
+        xaxis_tickformat='%Y-%m-%d %H:%M',
         title='Давление'
     )
 
@@ -79,7 +79,7 @@ def update_charts(n_intervals):
     humidity_chart.add_trace(go.Scatter(x=df['time'], y=df['humidity_after'], mode='lines', name='Восстановленные данные', line=dict(color='red')))
     humidity_chart.add_trace(go.Scatter(x=df['time'], y=df['humidity_before'], mode='lines+markers', name='Полученные данные', line=dict(color='blue')))
     humidity_chart.update_layout(
-        xaxis_tickformat='%Y-%m-%dT%H:%M',
+        xaxis_tickformat='%Y-%m-%d %H:%M',
         title='Влажность'
     )
 
@@ -87,7 +87,7 @@ def update_charts(n_intervals):
     wind_speed_chart.add_trace(go.Scatter(x=df['time'], y=df['wind_speed_after'], mode='lines', name='Восстановленные данные', line=dict(color='red')))
     wind_speed_chart.add_trace(go.Scatter(x=df['time'], y=df['wind_speed_before'], mode='lines+markers', name='Полученные данные', line=dict(color='blue')))
     wind_speed_chart.update_layout(
-        xaxis_tickformat='%Y-%m-%dT%H:%M',
+        xaxis_tickformat='%Y-%m-%d %H:%M',
         title='Скорость ветра'
     )
 
@@ -95,7 +95,7 @@ def update_charts(n_intervals):
     wind_direction_chart.add_trace(go.Scatter(x=df['time'], y=df['wind_direction_after'], mode='lines', name='Востоновленные данные', line=dict(color='red')))
     wind_direction_chart.add_trace(go.Scatter(x=df['time'], y=df['wind_direction_before'], mode='lines+markers', name='Полученные данные', line=dict(color='blue')))
     wind_direction_chart.update_layout(
-        xaxis_tickformat='%Y-%m-%dT%H:%M',
+        xaxis_tickformat='%Y-%m-%d %H:%M',
         title='Направление ветра'
     )
 
