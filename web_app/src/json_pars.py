@@ -36,4 +36,13 @@ def parsing(data: dict) -> pd.DataFrame:
     })
     return df
 
-#def update_data()
+def update_data(data: dict, data_frame_presents: pd.DataFrame) -> pd.DataFrame:
+    max_rows = 50
+    df = parsing(data)
+    result = pd.concat([data_frame_presents, df])
+    result = result.reset_index(drop=True)
+    if (len(result)>=max_rows):
+        result=result.drop(index=range(len(result)-max_rows))
+    result = result.reset_index(drop=True)
+    #print (result)
+    return result
