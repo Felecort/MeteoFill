@@ -1,9 +1,17 @@
+#front_receiver.py
 import pika
 from time import sleep
 
+# Global variable to store the received JSON data
+json_data = None
 
 def callback(ch, method, properties, body):
-    print(" [X] FRONT | HELLO FROM FRONT")
+    global json_data
+    print(" [X] FRONT | Received JSON")
+    
+    # Decode the message and store it in the global variable
+    json_data = body.decode('utf-8')
+    print(" [X] FRONT | JSON data updated", json_data)
 
 
 def get_channel():
