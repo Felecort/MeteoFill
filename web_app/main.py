@@ -1,6 +1,6 @@
 #main.py
 
-from src import app
+from src import WebInterface
 from src import front_receiver, callback
 import os
 from time import sleep
@@ -12,6 +12,7 @@ if __name__ == "__main__":
 
     pid=os.fork()
     if pid:
+        app = WebInterface()
         app.run(host="0.0.0.0", debug=True)
     else:
         print("Waiting...")
