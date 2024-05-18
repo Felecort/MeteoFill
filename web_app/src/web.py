@@ -1,23 +1,22 @@
-from .layout import*
+
+from .layout import *
+from .json_pars import parsing, update_data
+from .front_receiver import json_data
+
 import dash
-import dash.dash_table as dt
 from dash import dcc
 from dash import html
-from dash.dependencies import Input, Output, State
+from dash.dependencies import Input, Output
 
-from .json_pars import parsing, update_data
 import json
 
 import pandas as pd
 import plotly.graph_objs as go
 
-import os
 
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-# Import the global variable from front_receiver
-from .front_receiver import json_data
 
 # Инициализация приложения Dash
 external_stylesheets = [
