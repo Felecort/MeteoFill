@@ -52,16 +52,16 @@ app.layout = html.Div(children=[
     layout.data_table()
 ])
 
-# Обновление данных каждые 5 секунд
-@app.callback(
-    [Output('temp-chart', 'figure'),
-     Output('pressure-chart', 'figure'),
-     Output('humidity-chart', 'figure'),
-     Output('wind-speed-chart', 'figure'),
-     Output('wind-direction-chart', 'figure'),
-     Output('data-table', 'data')],
-    [Input('interval-component', 'n_intervals')]
-)
+callback_args = ([Output('temp-chart', 'figure'),
+                Output('pressure-chart', 'figure'),
+                Output('humidity-chart', 'figure'),
+                Output('wind-speed-chart', 'figure'),
+                Output('wind-direction-chart', 'figure'),
+                Output('data-table', 'data')],
+                [Input('interval-component', 'n_intervals')])
+
+
+@app.callback(*callback_args)
 def update_charts(n_intervals):
 
         with open("actual_data.json", "r") as f:
