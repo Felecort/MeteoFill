@@ -4,8 +4,6 @@
 # from .front_receiver import json_data
 from . import layout
 from . import json_pars
-from . import front_receiver
-
 
 import dash
 from dash import dcc
@@ -16,7 +14,6 @@ import json
 
 import pandas as pd
 import plotly.graph_objs as go
-
 
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -129,5 +126,5 @@ class WebInterface:
         return app
     
 
-# if __name__ == '__main__':
-#     app.run_server(host="0.0.0.0", debug=True)
+if __name__ == '__main__':
+    WebInterface().run_server(host="0.0.0.0", debug=True)
