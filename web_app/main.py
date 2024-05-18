@@ -1,13 +1,11 @@
-#main.py
 
-from src import WebInterface
+from src import app
 from src import front_receiver, callback
 from time import sleep
 from multiprocessing import Process
 
 
 def run_web():
-    app = WebInterface()
     app.run(host="0.0.0.0", debug=True)
 
 
@@ -24,7 +22,6 @@ def run_receiver():
 
 
 if __name__ == "__main__":
-
     p1 = Process(target=run_web)
     p1.start()
     p2 = Process(target=run_receiver)
