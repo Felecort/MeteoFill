@@ -1,7 +1,4 @@
 
-# from .layout import *
-# from .json_pars import parsing, update_data
-# from .front_receiver import json_data
 from . import layout
 from . import json_pars
 
