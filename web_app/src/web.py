@@ -45,7 +45,7 @@ app.layout = html.Div(children=[
     layout.header(),
     dcc.Interval(
         id="interval-component",
-        interval=500,  # в миллисекундах
+        interval=5000,  # в миллисекундах
         n_intervals=0
     ),
     layout.charts(),
