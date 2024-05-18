@@ -9,7 +9,7 @@ channel = connection.channel()
 channel.queue_declare(queue='gui_queue')
 
 # Sample dataset
-with open('C:/Meteo/MeteoFill/web_app/response_example.json', 'r') as f:
+with open('web_app/response_example.json', 'r') as f:
     dataset = json.load(f)
 
 # Convert dataset to JSON string and send it to the 'gui_queue'
