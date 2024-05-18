@@ -1,30 +1,31 @@
 #main.py
 
-from src import app
+from src import WebInterface
 from src import front_receiver, callback
-import os
 from time import sleep
-# from multiprocessing import Process
+from multiprocessing import Process
+
+
+def run_web():
+    app = WebInterface()
+    app.run(host="0.0.0.0", debug=True)
+
+
+def run_receiver():
+    print("Waiting...")
+    sleep(10)
+    channel = front_receiver.get_channel()
+
+    channel.basic_consume(queue='gui_queue',
+                            on_message_callback=callback,
+                            auto_ack=True)
+    print(' [x] FRONT | Waiting for messages. To exit press CTRL+C')
+    channel.start_consuming()
+
 
 if __name__ == "__main__":
 
-    # app.run(host="0.0.0.0", debug=True)
-
-    pid=os.fork()
-    if pid:
-        app.run(host="0.0.0.0", debug=True)
-    else:
-        print("Waiting...")
-        sleep(7)
-        channel = front_receiver.get_channel()
-
-        channel.basic_consume(queue='gui_queue',
-                             on_message_callback=callback,
-                             auto_ack=True)
-        print(' [x] FRONT | Waiting for messages. To exit press CTRL+C')
-        channel.start_consuming()
-
-
-    # p1 = Process(target=app.run, kwargs={"host":"0.0.0.0", "debug":True})
-    # p1.start()
-    # # p2 = Process(target=channel.basic_consume, kwargs={"queue":"gui_queue", "on_message_callback":callback, "auto_ack":True})
+    p1 = Process(target=run_web)
+    p1.start()
+    p2 = Process(target=run_receiver)
+    p2.start()

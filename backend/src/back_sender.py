@@ -9,9 +9,7 @@ channel = connection.channel()
 channel.queue_declare(queue='data_queue')
 
 # Sample dataset
-import os
-os.system("pwd")
-with open('/home/vadim/projects/MeteoFill/backend/src/responce_example.json', 'r') as f:
+with open('backend/responce_example.json', 'r') as f:
     dataset = json.load(f)
 
 # Convert dataset to JSON and send it to the 'data_queue'
