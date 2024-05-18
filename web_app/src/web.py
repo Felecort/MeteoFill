@@ -63,9 +63,7 @@ app.layout = html.Div(children=[
     [Input('interval-component', 'n_intervals')]
 )
 def update_charts(n_intervals):
-    
-    # Use the global JSON data directly
-    # try:
+
         with open("actual_data.json", "r") as f:
             raw_data = json.load(f)
             data = json_pars.parsing(raw_data)
@@ -120,7 +118,7 @@ def update_charts(n_intervals):
 
         # Возвращение графиков и таблицы
         return temp_chart, pressure_chart, humidity_chart, wind_speed_chart, wind_direction_chart, data_frame_presents.to_dict('records')
-    # except Exception:
+        # Handel error soon...
         return dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
 
 if __name__ == '__main__':
