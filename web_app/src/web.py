@@ -57,15 +57,17 @@ app.layout = html.Div(children=[
 ])
 
 # Обновление данных каждые 5 секунд
-@app.callback(
-    [Output('temp-chart', 'figure'),
+
+
+callback_charts = ([Output('temp-chart', 'figure'),
      Output('pressure-chart', 'figure'),
      Output('humidity-chart', 'figure'),
      Output('wind-speed-chart', 'figure'),
      Output('wind-direction-chart', 'figure'),
      Output('data-table', 'data')],
-    [Input('interval-component', 'n_intervals')]
-)
+    [Input('interval-component', 'n_intervals')])
+
+@app.callback(callback_charts)
 def update_charts(n_intervals):
     global data_frame_presents
     
