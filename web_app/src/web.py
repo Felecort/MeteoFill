@@ -1,7 +1,11 @@
 
-from .layout import *
-from .json_pars import parsing, update_data
-from .front_receiver import json_data
+# from .layout import *
+# from .json_pars import parsing, update_data
+# from .front_receiver import json_data
+from . import layout
+from . import json_pars
+from . import front_receiver
+
 
 import dash
 from dash import dcc
@@ -47,14 +51,14 @@ class WebInterface:
 
         # Макет приложения
         self.app.layout = html.Div(children=[
-            header(),
+            layout.header(),
             dcc.Interval(
                 id="interval-component",
                 interval=5000,  # в миллисекундах
                 n_intervals=0
             ),
-            charts(),
-            data_table()
+            layout.charts(),
+            layout.data_table()
         ])
 
 
@@ -68,15 +72,15 @@ class WebInterface:
 
     def __call__(self):
         @self.app.callback(self.callback_charts)
-        def update_charts(self):
+        def update_charts():
             global data_frame_presents
             
             # Use the global JSON data directly
-            if json_data:
-                data = json.loads(json_data)
+            if json_pars.json_data:
+                data = json.loads(json_pars.json_data)
 
                 # Создание датафрейма внутри функции
-                data_frame_presents = update_data(data, data_frame_presents)
+                data_frame_presents = json_pars.update_data(data, data_frame_presents)
 
                 temp_chart = go.Figure()
                 temp_chart.add_trace(go.Scatter(x=data_frame_presents['time'], y=data_frame_presents['temperature_after'], mode='lines', name='Восстановленные данные', line=dict(color='red')))
