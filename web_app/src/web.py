@@ -23,9 +23,8 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
 class WebInterface:
-    def __init__(self):
-        # Инициализация приложения Dash
-        self.external_stylesheets = [
+    def __new__(self):
+        external_stylesheets = [
             {
                 "href": "https://fonts.googleapis.com/css2?"
                         "family=Lato:wght@400;700&display=swap",
@@ -33,11 +32,11 @@ class WebInterface:
             },
         ]
 
-        self.app = dash.Dash(__name__, external_stylesheets=self.external_stylesheets)
+        app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
-        self.app.title = "Данные метеостанции!"
+        app.title = "Данные метеостанции!"
 
-        self.data_frame_presents = pd.DataFrame(columns=['time',
+        data_frame_presents = pd.DataFrame(columns=['time',
                                                         'temperature_before',
                                                         'temperature_after',
                                                         'wind_speed_before',
@@ -50,7 +49,7 @@ class WebInterface:
                                                         'humidity_after'])
 
         # Макет приложения
-        self.app.layout = html.Div(children=[
+        app.layout = html.Div(children=[
             layout.header(),
             dcc.Interval(
                 id="interval-component",
@@ -62,7 +61,7 @@ class WebInterface:
         ])
 
 
-        self.callback_charts = ([Output('temp-chart', 'figure'),
+        callback_charts = ([Output('temp-chart', 'figure'),
             Output('pressure-chart', 'figure'),
             Output('humidity-chart', 'figure'),
             Output('wind-speed-chart', 'figure'),
@@ -70,9 +69,8 @@ class WebInterface:
             Output('data-table', 'data')],
             [Input('interval-component', 'n_intervals')])
 
-    def __call__(self):
-        @self.app.callback(self.callback_charts)
-        def update_charts():
+        @app.callback(callback_charts)
+        def update_charts(self):
             global data_frame_presents
             
             # Use the global JSON data directly
@@ -126,9 +124,10 @@ class WebInterface:
                 return temp_chart, pressure_chart, humidity_chart, wind_speed_chart, wind_direction_chart, data_frame_presents.to_dict('records')
             else:
                 return dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
+        
 
-        return update_charts()
-
+        return app
+    
 
 # if __name__ == '__main__':
 #     app.run_server(host="0.0.0.0", debug=True)
