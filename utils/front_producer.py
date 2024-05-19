@@ -2,7 +2,7 @@ import pika
 import json
 
 
-def send_data(name="actual_data.json"):
+def send_data(name="response_example.json"):
     # Connect to RabbitMQ server running on localhost
     connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
     channel = connection.channel()
@@ -11,7 +11,7 @@ def send_data(name="actual_data.json"):
     channel.queue_declare(queue='gui_queue')
 
     # Sample dataset
-    with open(f"web_app/{name}", 'r') as f:
+    with open(f"utils/{name}", 'r') as f:
         dataset = json.load(f)
 
     # Convert dataset to JSON string and send it to the 'gui_queue'

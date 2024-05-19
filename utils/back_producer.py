@@ -11,7 +11,7 @@ def send_data(name="response_example.json"):
     channel.queue_declare(queue='data_queue')
 
     # Sample dataset
-    with open(f"backend/{name}", 'r') as f:
+    with open(f"utils/{name}", 'r') as f:
         dataset = json.load(f)
 
     # Convert dataset to JSON and send it to the 'data_queue'
