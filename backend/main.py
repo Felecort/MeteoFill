@@ -1,5 +1,5 @@
 
-from backend.src import back_consumer
+from src import back_consumer
 
 if __name__ == "__main__":
     channel = back_consumer.get_channel()
