@@ -2,7 +2,7 @@
 from src import app
 from time import sleep
 from multiprocessing import Process
-from web_app.src import front_consumer
+from src import front_consumer
 
 
 def run_web():
