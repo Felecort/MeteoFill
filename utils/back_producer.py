@@ -2,24 +2,24 @@ import pika
 import json
 
 
-def send_data(name="actual_data.json"):
+def send_data(name="response_example.json"):
     # Connect to RabbitMQ server running on localhost
     connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
     channel = connection.channel()
 
-    # Declare a queue named 'gui_queue'
-    channel.queue_declare(queue='gui_queue')
+    # Declare a queue named 'data_queue'
+    channel.queue_declare(queue='data_queue')
 
     # Sample dataset
-    with open(f"web_app/{name}", 'r') as f:
+    with open(f"utils/{name}", 'r') as f:
         dataset = json.load(f)
 
-    # Convert dataset to JSON string and send it to the 'gui_queue'
+    # Convert dataset to JSON and send it to the 'data_queue'
     json_string = json.dumps(dataset)
     channel.basic_publish(exchange='',
-                        routing_key='gui_queue',
+                        routing_key='data_queue',
                         body=json_string)
-    print(" [X] FRONT | Dataset Sent")
+    print(" [X] BACK | Dataset Sent")
 
     connection.close()
 
