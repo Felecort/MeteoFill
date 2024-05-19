@@ -2,7 +2,7 @@ import pika
 import json
 
 
-def send_data(name="response_example.json"):
+def send_data(name="response.json"):
     # Connect to RabbitMQ server running on localhost
     connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
     channel = connection.channel()
