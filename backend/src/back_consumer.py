@@ -1,7 +1,7 @@
 import pika
 import json
-from backend import nans_handler
-from backend.src.nans_handler import fill_missing_values, create_nan, calculate_rmse
+# from src import nans_handler
+from src.nans_handler import fill_missing_values, create_nan, calculate_rmse
 import pandas as pd
 from datetime import datetime
 from time import sleep
