@@ -5,7 +5,7 @@ from threading import Thread, Event
 import pandas as pd
 import pika
 
-from weather_api_calls import get_weather
+from src.weather_api_calls import get_weather
 
 """
 При инициализации:
