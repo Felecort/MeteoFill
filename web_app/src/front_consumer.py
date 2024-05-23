@@ -24,14 +24,16 @@ def callback(ch, method, properties, body):
     ### MUST BE IN "response.json"
     # result = json_pars.update_data(new_data, previous_data)
 
-def get_channel():
-    # Connect to RabbitMQ server running on localhost
-    credentials = pika.PlainCredentials('guest', 'guest')
-    connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq', credentials=credentials))
+def get_channel(rabbitmq_user: str,
+                rabbitmq_pass: str,
+                rabbitmq_server_name: str,
+                rabbitmq_queue: str,
+                ) -> pika.adapters.blocking_connection.BlockingChannel:
+    credentials = pika.PlainCredentials(rabbitmq_user, rabbitmq_pass)
+    connection = pika.BlockingConnection(pika.ConnectionParameters(rabbitmq_server_name, credentials=credentials))
     channel = connection.channel()
 
-    # Declare a queue named 'data_queue'
-    channel.queue_declare(queue='gui_queue')
-
+    channel.queue_declare(queue=rabbitmq_queue)
+    
     return channel
 
