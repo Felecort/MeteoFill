@@ -7,8 +7,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
-    volumes:
-      - ./backend:/backend
+    # volumes:
+    #   - ./backend:/backend
     # environment:
     #   POSTGRES_USER: myuser
     #   POSTGRES_PASSWORD: mypassword
