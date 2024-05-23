@@ -19,12 +19,16 @@ def calculate_timestamps(start_timestamp: datetime, end_timestamp: datetime, del
     return timestamps
 
 
-def get_channel():
-    credentials = pika.PlainCredentials('guest', 'guest')
-    connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq', credentials=credentials))
+def get_channel(rabbitmq_user: str,
+                rabbitmq_pass: str,
+                rabbitmq_server_name: str,
+                rabbitmq_queue: str,
+                ) -> pika.adapters.blocking_connection.BlockingChannel:
+    credentials = pika.PlainCredentials(rabbitmq_user, rabbitmq_pass)
+    connection = pika.BlockingConnection(pika.ConnectionParameters(rabbitmq_server_name, credentials=credentials))
     channel = connection.channel()
 
-    channel.queue_declare(queue='data_queue')
+    channel.queue_declare(queue=rabbitmq_queue)
     
     return channel
 
