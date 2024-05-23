@@ -1,6 +1,15 @@
 version: '3'
 
 services:
+  control-system:
+    build:
+      context: ./control-system
+      dockerfile: Dockerfile
+    # ports:
+    #   -  "8000:8000"
+    depends_on:
+      - postgres
+      - rabbitmq
   backend:
     build:
       context: ./backend
