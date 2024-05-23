@@ -1,7 +1,7 @@
 import time
 import json
 from threading import Thread, Event
-
+from typing import Tuple, Dict
 import pandas as pd
 import pika
 
@@ -25,7 +25,23 @@ from src.weather_api_calls import get_weather
 
 
 class BusinessLogic:
-    def __init__(self, request_frequency_sec: int):
+    def __init__(self,
+                 request_frequency_sec: int,
+                 rabbitmq_system_2_backend_queue: str,
+                 rabbitmq_system_2_frontend_queue: str,
+                 rabbitmq_backend_2_system_queue: str,
+                 rabbitmq_server_name: str,
+                 rabbitmq_user: str,
+                 rabbitmq_pass: str,
+                 rabbitmq_location: str):
+        self._rabbitmq_system_2_backend_queue = rabbitmq_system_2_backend_queue
+        self._rabbitmq_system_2_frontend_queue = rabbitmq_system_2_frontend_queue
+        self._rabbitmq_backend_2_system_queue = rabbitmq_backend_2_system_queue
+        self._rabbitmq_server_name = rabbitmq_server_name
+        self._rabbitmq_user = rabbitmq_user
+        self._rabbitmq_pass = rabbitmq_pass
+        self._rabbitmq_location = rabbitmq_location
+
         self._request_timeout = request_frequency_sec
         self._name_mapping = {
             'temperature_2m': 'Температура',
@@ -43,7 +59,7 @@ class BusinessLogic:
 
     def __set_backend_connection(
             self, tries_num: int = 10
-    ) -> (pika.adapters.blocking_connection.BlockingChannel, pika.adapters.blocking_connection.BlockingChannel):
+    ) -> Tuple[pika.adapters.blocking_connection.BlockingChannel, pika.adapters.blocking_connection.BlockingChannel]:
         i = 0
         done_flag = False
         backend_conn = None
@@ -52,12 +68,12 @@ class BusinessLogic:
             i += 1
             done_flag = True
             try:
-                backend_conn = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+                backend_conn = pika.BlockingConnection(pika.ConnectionParameters(self._rabbitmq_server_name))
                 system2backend_channel = backend_conn.channel()
-                system2backend_channel.queue_declare(queue='system2backend')
+                system2backend_channel.queue_declare(queue=self._rabbitmq_system_2_backend_queue)
             except:
                 done_flag = False
-                print(f'Cant connect. Try again #{i}')
+                print(f'Cant connect {self._rabbitmq_system_2_backend_queue}. Try again #{i}')
                 if i >= tries_num:
                     raise ConnectionError
                 time.sleep(1)
@@ -66,7 +82,7 @@ class BusinessLogic:
 
     def __set_frontend_connection(
             self, tries_num: int = 10
-    ) -> (pika.adapters.blocking_connection.BlockingChannel, pika.adapters.blocking_connection.BlockingChannel):
+    ) -> Tuple[pika.adapters.blocking_connection.BlockingChannel, pika.adapters.blocking_connection.BlockingChannel]:
         i = 0
         done_flag = False
         frontend_conn = None
@@ -75,12 +91,12 @@ class BusinessLogic:
             i += 1
             done_flag = True
             try:
-                frontend_conn = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+                frontend_conn = pika.BlockingConnection(pika.ConnectionParameters(self._rabbitmq_server_name))
                 system2frontend_channel = frontend_conn.channel()
-                system2frontend_channel.queue_declare(queue='system2frontend')
+                system2frontend_channel.queue_declare(queue=self._rabbitmq_system_2_frontend_queue)
             except:
                 done_flag = False
-                print(f'Cant connect. Try again #{i}')
+                print(f'Cant connect {self._rabbitmq_system_2_frontend_queue}. Try again #{i}')
                 if i >= tries_num:
                     raise ConnectionError
                 time.sleep(1)
@@ -95,9 +111,9 @@ class BusinessLogic:
             self._evnt.set()
 
         self._backend2system_channel = self._backend_conn.channel()
-        self._backend2system_channel.queue_declare(queue='backend2system')
+        self._backend2system_channel.queue_declare(queue=self._rabbitmq_backend_2_system_queue)
         self._backend2system_channel.basic_consume(
-            queue='backend2system',
+            queue=self._rabbitmq_backend_2_system_queue,
             on_message_callback=system_consumer,
             auto_ack=True
         )
@@ -152,7 +168,7 @@ class BusinessLogic:
         backend_request = self.__create_backend_request(raw_weather_data)
         self._system2backend_channel.basic_publish(
             exchange='',
-            routing_key='system2backend',
+            routing_key=self._rabbitmq_system_2_backend_queue,
             body=json.dumps(backend_request)
         )
         print(f'Data send to backend at {time.time()}')
@@ -182,7 +198,7 @@ class BusinessLogic:
         frontend_request = self.__create_frontend_request(unfilled_weather_data, filled_weather_data)
         self._system2frontend_channel.basic_publish(
             exchange='',
-            routing_key='system2backend',
+            routing_key=self._rabbitmq_system_2_backend_queue,
             body=json.dumps(frontend_request)
         )
         print(f'Data send to frontend at {time.time()}')
