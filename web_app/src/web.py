@@ -27,18 +27,6 @@ class WeatherApp:
         self.app = dash.Dash(__name__, external_stylesheets=self.external_stylesheets)
         self.app.title = "Данные метеостанции!"
 
-        self.data = pd.DataFrame(columns=['time',
-                                          'temperature_before',
-                                          'temperature_after',
-                                          'wind_speed_before',
-                                          'wind_speed_after',
-                                          'wind_direction_before',
-                                          'wind_direction_after',
-                                          'pressure_before',
-                                          'pressure_after',
-                                          'humidity_before',
-                                          'humidity_after'])
-
         self.app.layout = self.create_layout()
         self.register_callbacks()
 
