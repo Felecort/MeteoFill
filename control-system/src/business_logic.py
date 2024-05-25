@@ -54,7 +54,10 @@ class BusinessLogic:
         self._evnt = Event()
         self._evnt.clear()
         self._backend_answer = None
-        self.__start_consuming_from_backend()
+        self._consumer_thread = Thread(target=self.__start_consuming_from_backend)
+        self._consumer_thread.start()
+        self._consumer_thread.join(0)
+
         self._frontend_conn, self._system2frontend_channel = self.__set_frontend_connection()
 
     def __set_backend_connection(
@@ -76,7 +79,7 @@ class BusinessLogic:
                 print(f'Cant connect {self._rabbitmq_system_2_backend_queue}. Try again #{i}')
                 if i >= tries_num:
                     raise ConnectionError
-                time.sleep(1)
+                time.sleep(5)
 
         return backend_conn, system2backend_channel
 
@@ -99,28 +102,26 @@ class BusinessLogic:
                 print(f'Cant connect {self._rabbitmq_system_2_frontend_queue}. Try again #{i}')
                 if i >= tries_num:
                     raise ConnectionError
-                time.sleep(1)
+                time.sleep(5)
 
         return frontend_conn, system2frontend_channel
 
     def __start_consuming_from_backend(self):
-
         def system_consumer(ch, method, properties, body):
             print(f'Data collected at {time.time()}')
             self._backend_answer = body
             self._evnt.set()
 
-        self._backend2system_channel = self._backend_conn.channel()
-        self._backend2system_channel.queue_declare(queue=self._rabbitmq_backend_2_system_queue)
-        self._backend2system_channel.basic_consume(
+        backend_conn = pika.BlockingConnection(pika.ConnectionParameters(self._rabbitmq_server_name))
+
+        backend2system_channel = backend_conn.channel()
+        backend2system_channel.queue_declare(queue=self._rabbitmq_backend_2_system_queue)
+        backend2system_channel.basic_consume(
             queue=self._rabbitmq_backend_2_system_queue,
             on_message_callback=system_consumer,
             auto_ack=True
         )
-
-        self._consumer_thread = Thread(target=self._backend2system_channel.start_consuming)
-        self._consumer_thread.start()
-        self._consumer_thread.join(0)
+        backend2system_channel.start_consuming()
 
     def __get_weather_data(self):
         data = get_weather()
@@ -166,6 +167,8 @@ class BusinessLogic:
 
     def __send_and_wait_data_backend(self, raw_weather_data: pd.DataFrame):
         backend_request = self.__create_backend_request(raw_weather_data)
+        print('Создан запрос на бэкенд')
+        print('Пробуем отправить запрос...')
         self._system2backend_channel.basic_publish(
             exchange='',
             routing_key=self._rabbitmq_system_2_backend_queue,
@@ -220,16 +223,21 @@ class BusinessLogic:
 
             # Запрашиваем данные о погоде
             raw_weather_data = self.__get_weather_data()
+            print('Данные о погоде получены')
             # Формируем запрос и посылаем сырые данные на обработку на бэкенд
             unfilled_weather_data, filled_weather_data = self.__send_and_wait_data_backend(raw_weather_data)
+            print('Данные отправлены на бэкенд')
             # Формируем запрос и посылаем заполненные данные на фронтенд
             self.__send_data_to_frontend(unfilled_weather_data, filled_weather_data)
+            print('Данные отправлены на фронтенд')
             # Сохраняем данные в БД
             self.__save_data_to_database(unfilled_weather_data, filled_weather_data)
+            print('Данные сохранены в БД')
             # Отправляем заполненные данные во внешнюю систему
             self.__send_filled_data_to_external_system(filled_weather_data)
+            print('Обработанные данные отправлены на внешнюю систему')
 
 
-if __name__ == '__main__':
-    bl = BusinessLogic(10)
-    bl.run()
+# if __name__ == '__main__':
+#     bl = BusinessLogic(10)
+#     bl.run()
