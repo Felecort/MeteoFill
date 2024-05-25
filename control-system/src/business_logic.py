@@ -201,7 +201,7 @@ class BusinessLogic:
         frontend_request = self.__create_frontend_request(unfilled_weather_data, filled_weather_data)
         self._system2frontend_channel.basic_publish(
             exchange='',
-            routing_key=self._rabbitmq_system_2_backend_queue,
+            routing_key=self._rabbitmq_system_2_frontend_queue,
             body=json.dumps(frontend_request)
         )
         print(f'Data send to frontend at {time.time()}')
