@@ -16,8 +16,12 @@ def calculate_timestamps(start_timestamp: datetime, end_timestamp: datetime, del
 
 def parsing(data: dict) -> pd.DataFrame:
     delay = data["delay"]
-    start_timestamp = datetime.fromisoformat(data["timestamps"]["start"])
-    end_timestamp = datetime.fromisoformat(data["timestamps"]["end"])
+    try:
+        start_timestamp = datetime.strptime(data["timestamps"]["start"], "%Y-%m-%dT%H:%M:%S.%f000")
+        end_timestamp = datetime.strptime(data["timestamps"]["end"], "%Y-%m-%dT%H:%M:%S.%f000")
+    except ValueError as ve:
+        start_timestamp = datetime.strptime(data["timestamps"]["start"], "%Y-%m-%dT%H:%M")
+        end_timestamp = datetime.strptime(data["timestamps"]["end"], "%Y-%m-%dT%H:%M")
     
     timestamps = calculate_timestamps(start_timestamp, end_timestamp, delay)
     
