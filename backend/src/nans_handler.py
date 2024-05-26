@@ -63,7 +63,7 @@ def fill_missing_values(data: pd.DataFrame) -> pd.DataFrame:
         model.fit(X, y)
         missing_values = model.predict(missing_indices.to_numpy().reshape(-1, 1))
         data_filled.loc[missing_indices, column] = missing_values.flatten()
-    data_filled.reset_index(inplace=True)
+    # data_filled.reset_index(inplace=True)
     return data_filled
 
 
