@@ -6,3 +6,7 @@ openmeteo_requests==1.2.0
 openmeteo_sdk==1.11.4
 requests-cache==1.2.0
 retry-requests==2.0.0
+SQLAlchemy==2.0.30
+SQLAlchemy-Utils==0.41.2
+psycopg==3.1.19
+psycopg2==2.9.9
