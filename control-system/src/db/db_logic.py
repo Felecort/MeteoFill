@@ -11,7 +11,7 @@ class DatabaseManager:
             username: str,
             password: str,
             dbname: str,
-            host: str = 'localhost',
+            host: str = 'postgres',
             port: int = 5432
     ):
         self._DATABASE_URI = f"postgresql://{username}:{password}@{host}:{port}/{dbname}"
