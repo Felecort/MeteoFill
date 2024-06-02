@@ -48,6 +48,7 @@ services:
       - .env
 
 
+
   postgres:
     image: postgres:latest
     ports:

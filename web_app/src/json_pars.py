@@ -1,4 +1,5 @@
 import pandas as pd
+import json
 from datetime import datetime
 
 
@@ -40,10 +41,71 @@ def parsing(data: dict) -> pd.DataFrame:
     })
     return df
 
-def update_data(data: pd.DataFrame, data_frame_presents: pd.DataFrame, max_rows=50) -> pd.DataFrame:
-    result = pd.concat([data_frame_presents, data])
+def update_data(new_data: dict, max_rows=50):
+    with open("response.json", "r") as f:
+            previous_data = json.load(f)
+            previous_data_df = parsing(previous_data)
+
+    new_data_df = parsing(new_data)
+
+    result = pd.concat([previous_data_df, new_data_df])
     result.reset_index(drop=True, inplace=True)
-    result.sort_values("time", inplace=True)
+    #result.sort_values("time", inplace=True)
     if len(result) >= max_rows:
-        return result.loc[:max_rows]
-    return result
+        result = result.iloc[:max_rows]
+
+    # Конвертируем столбец времени в строковый формат "YYYY-MM-DDTHH:MM" перед сериализацией в JSON
+    result['time'] = result['time'].dt.strftime('%Y-%m-%dT%H:%M')
+
+    data_to_save = {
+            "timestamps": {
+                "start": result['time'].iloc[0],
+                "end": result['time'].iloc[-1]
+            },
+            "delay": new_data["delay"],
+            "data": [
+                {
+                    "name": "Температура",
+                    "id": "temperature_2m",
+                    "values": {
+                        "before": result['temperature_before'].tolist(),
+                        "after": result['temperature_after'].tolist()
+                    }
+                },
+                {
+                    "name": "Скорость ветра",
+                    "id": "wind_speed_10m",
+                    "values": {
+                        "before": result['wind_speed_before'].tolist(),
+                        "after": result['wind_speed_after'].tolist()
+                    }
+                },
+                {
+                    "name": "Направление ветра",
+                    "id": "wind_direction_10m",
+                    "values": {
+                        "before": result['wind_direction_before'].tolist(),
+                        "after": result['wind_direction_after'].tolist()
+                    }
+                },
+                {
+                    "name": "Давление",
+                    "id": "pressure_msl",
+                    "values": {
+                        "before": result['pressure_before'].tolist(),
+                        "after": result['pressure_after'].tolist()
+                    }
+                },
+                {
+                    "name": "Влажность",
+                    "id": "humidity_2m",
+                    "values": {
+                        "before": result['humidity_before'].tolist(),
+                        "after": result['humidity_after'].tolist()
+                    }
+                }
+            ]
+        }
+
+    with open("response.json", "w") as f:
+        json.dump(data_to_save, f, ensure_ascii=False, indent=4)

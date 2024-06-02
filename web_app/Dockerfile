@@ -8,4 +8,3 @@ COPY . ./web_app
 WORKDIR /web_app
 
 CMD ["python", "-u", "main.py"]
-# CMD ["python", "-u", "-c", "import os; os.system('tree -L 1')"]
