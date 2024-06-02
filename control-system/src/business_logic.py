@@ -43,7 +43,7 @@ class BusinessLogic:
         self._rabbitmq_pass = rabbitmq_pass
         self._rabbitmq_location = rabbitmq_location
 
-        self._db = DatabaseManager('postgres', 'root', 'meteo_fill', port=5432)
+        self._db = DatabaseManager('postgres', 'postgres', 'mydb', port=5432)
 
         self._request_timeout = request_frequency_sec
         self._name_mapping = {
