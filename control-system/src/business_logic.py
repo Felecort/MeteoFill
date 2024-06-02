@@ -6,6 +6,7 @@ import pandas as pd
 import pika
 
 from src.weather_api_calls import get_weather
+from src.db.db_logic import DatabaseManager
 
 """
 При инициализации:
@@ -41,6 +42,8 @@ class BusinessLogic:
         self._rabbitmq_user = rabbitmq_user
         self._rabbitmq_pass = rabbitmq_pass
         self._rabbitmq_location = rabbitmq_location
+
+        self._db = DatabaseManager('postgres', 'postgres', 'mydb', port=5432)
 
         self._request_timeout = request_frequency_sec
         self._name_mapping = {
@@ -207,8 +210,28 @@ class BusinessLogic:
         print(f'Data send to frontend at {time.time()}')
 
     def __save_data_to_database(self, unfilled_data: dict, filled_data: dict):
-        # TODO: Реализовать сохранение в БД PostgreSQL
-        pass
+        start_timestamp = unfilled_data['timestamps']['start']
+        end_timestamp = unfilled_data['timestamps']['end']
+        delay = unfilled_data['delay']
+        timestamps = pd.date_range(
+            start=start_timestamp,
+            end=end_timestamp,
+            # from nanoseconds to seconds
+            freq=pd.Timedelta(int(delay * 1e9)),
+            inclusive="both"
+        )
+        raw_data = [{'timestamp': date} for date in range(len(timestamps))]
+        processed_data = [{'timestamp': date} for date in range(len(timestamps))]
+
+        for unfilled_elem in unfilled_data['data']:
+            for i, value in enumerate(unfilled_elem['values']):
+                raw_data[i][unfilled_elem['id']] = value
+        for filled_elem in filled_data['data']:
+            for i, value in enumerate(filled_elem['values']):
+                processed_data[i][filled_elem['id']] = value
+
+        for raw_elem, processed_elem in zip(raw_data, processed_data):
+            self._db.store_weather_data(raw_elem, processed_elem)
 
     def __send_filled_data_to_external_system(self, filled_data: dict):
         filled_data = self.__output_adapter(filled_data)

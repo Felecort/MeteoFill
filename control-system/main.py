@@ -15,7 +15,7 @@ REQUEST_FREQUENCY = 10
 
 
 if __name__ == '__main__':
-    sleep(15)
+    sleep(12)
     bl = BusinessLogic(REQUEST_FREQUENCY,
                        SYSTEM_2_BACKEND_QUEUE,
                        SYSTEM_2_FRONTEND_QUEUE,
