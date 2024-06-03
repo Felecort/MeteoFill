@@ -2,13 +2,6 @@ import pandas as pd
 import json
 from datetime import datetime
 
-name_mapping = {
-    'temperature_2m': 'Температура',
-    'relative_humidity_2m': 'Относительная влажность',
-    'surface_pressure': 'Атмосферное давление',
-    'wind_speed_10m': 'Скорость ветра',
-    'wind_direction_10m': 'Направление ветра'
-}
 
 # Функция для расчета временных меток
 def calculate_timestamps(start_timestamp: datetime, end_timestamp: datetime, delay: int) -> pd.DatetimeIndex:
