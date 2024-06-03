@@ -6,6 +6,7 @@ import pandas as pd
 import pika
 
 from src.weather_api_calls import get_weather
+from src.db.db_logic import DatabaseManager
 
 """
 При инициализации:
@@ -42,6 +43,8 @@ class BusinessLogic:
         self._rabbitmq_pass = rabbitmq_pass
         self._rabbitmq_location = rabbitmq_location
 
+        self._db = DatabaseManager('postgres', 'postgres', 'mydb', port=5432)
+
         self._request_timeout = request_frequency_sec
         self._name_mapping = {
             'temperature_2m': 'Температура',
@@ -54,7 +57,10 @@ class BusinessLogic:
         self._evnt = Event()
         self._evnt.clear()
         self._backend_answer = None
-        self.__start_consuming_from_backend()
+        self._consumer_thread = Thread(target=self.__start_consuming_from_backend)
+        self._consumer_thread.start()
+        self._consumer_thread.join(0)
+
         self._frontend_conn, self._system2frontend_channel = self.__set_frontend_connection()
 
     def __set_backend_connection(
@@ -76,7 +82,7 @@ class BusinessLogic:
                 print(f'Cant connect {self._rabbitmq_system_2_backend_queue}. Try again #{i}')
                 if i >= tries_num:
                     raise ConnectionError
-                time.sleep(1)
+                time.sleep(5)
 
         return backend_conn, system2backend_channel
 
@@ -99,28 +105,26 @@ class BusinessLogic:
                 print(f'Cant connect {self._rabbitmq_system_2_frontend_queue}. Try again #{i}')
                 if i >= tries_num:
                     raise ConnectionError
-                time.sleep(1)
+                time.sleep(5)
 
         return frontend_conn, system2frontend_channel
 
     def __start_consuming_from_backend(self):
-
         def system_consumer(ch, method, properties, body):
             print(f'Data collected at {time.time()}')
             self._backend_answer = body
             self._evnt.set()
 
-        self._backend2system_channel = self._backend_conn.channel()
-        self._backend2system_channel.queue_declare(queue=self._rabbitmq_backend_2_system_queue)
-        self._backend2system_channel.basic_consume(
+        backend_conn = pika.BlockingConnection(pika.ConnectionParameters(self._rabbitmq_server_name))
+
+        backend2system_channel = backend_conn.channel()
+        backend2system_channel.queue_declare(queue=self._rabbitmq_backend_2_system_queue)
+        backend2system_channel.basic_consume(
             queue=self._rabbitmq_backend_2_system_queue,
             on_message_callback=system_consumer,
             auto_ack=True
         )
-
-        self._consumer_thread = Thread(target=self._backend2system_channel.start_consuming)
-        self._consumer_thread.start()
-        self._consumer_thread.join(0)
+        backend2system_channel.start_consuming()
 
     def __get_weather_data(self):
         data = get_weather()
@@ -166,6 +170,8 @@ class BusinessLogic:
 
     def __send_and_wait_data_backend(self, raw_weather_data: pd.DataFrame):
         backend_request = self.__create_backend_request(raw_weather_data)
+        print('Создан запрос на бэкенд')
+        print('Пробуем отправить запрос...')
         self._system2backend_channel.basic_publish(
             exchange='',
             routing_key=self._rabbitmq_system_2_backend_queue,
@@ -198,14 +204,34 @@ class BusinessLogic:
         frontend_request = self.__create_frontend_request(unfilled_weather_data, filled_weather_data)
         self._system2frontend_channel.basic_publish(
             exchange='',
-            routing_key=self._rabbitmq_system_2_backend_queue,
+            routing_key=self._rabbitmq_system_2_frontend_queue,
             body=json.dumps(frontend_request)
         )
         print(f'Data send to frontend at {time.time()}')
 
     def __save_data_to_database(self, unfilled_data: dict, filled_data: dict):
-        # TODO: Реализовать сохранение в БД PostgreSQL
-        pass
+        start_timestamp = unfilled_data['timestamps']['start']
+        end_timestamp = unfilled_data['timestamps']['end']
+        delay = unfilled_data['delay']
+        timestamps = pd.date_range(
+            start=start_timestamp,
+            end=end_timestamp,
+            # from nanoseconds to seconds
+            freq=pd.Timedelta(int(delay * 1e9)),
+            inclusive="both"
+        )
+        raw_data = [{'timestamp': date} for date in range(len(timestamps))]
+        processed_data = [{'timestamp': date} for date in range(len(timestamps))]
+
+        for unfilled_elem in unfilled_data['data']:
+            for i, value in enumerate(unfilled_elem['values']):
+                raw_data[i][unfilled_elem['id']] = value
+        for filled_elem in filled_data['data']:
+            for i, value in enumerate(filled_elem['values']):
+                processed_data[i][filled_elem['id']] = value
+
+        for raw_elem, processed_elem in zip(raw_data, processed_data):
+            self._db.store_weather_data(raw_elem, processed_elem)
 
     def __send_filled_data_to_external_system(self, filled_data: dict):
         filled_data = self.__output_adapter(filled_data)
@@ -220,16 +246,21 @@ class BusinessLogic:
 
             # Запрашиваем данные о погоде
             raw_weather_data = self.__get_weather_data()
+            print('Данные о погоде получены')
             # Формируем запрос и посылаем сырые данные на обработку на бэкенд
             unfilled_weather_data, filled_weather_data = self.__send_and_wait_data_backend(raw_weather_data)
+            print('Данные отправлены на бэкенд')
             # Формируем запрос и посылаем заполненные данные на фронтенд
             self.__send_data_to_frontend(unfilled_weather_data, filled_weather_data)
+            print('Данные отправлены на фронтенд')
             # Сохраняем данные в БД
             self.__save_data_to_database(unfilled_weather_data, filled_weather_data)
+            print('Данные сохранены в БД')
             # Отправляем заполненные данные во внешнюю систему
             self.__send_filled_data_to_external_system(filled_weather_data)
+            print('Обработанные данные отправлены на внешнюю систему')
 
 
-if __name__ == '__main__':
-    bl = BusinessLogic(10)
-    bl.run()
+# if __name__ == '__main__':
+#     bl = BusinessLogic(10)
+#     bl.run()

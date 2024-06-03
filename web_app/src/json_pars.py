@@ -23,7 +23,6 @@ def parsing(data: dict) -> pd.DataFrame:
     except ValueError as ve:
         start_timestamp = datetime.strptime(data["timestamps"]["start"], "%Y-%m-%dT%H:%M")
         end_timestamp = datetime.strptime(data["timestamps"]["end"], "%Y-%m-%dT%H:%M")
-
     
     timestamps = calculate_timestamps(start_timestamp, end_timestamp, delay)
     
