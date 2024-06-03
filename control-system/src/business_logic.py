@@ -220,8 +220,8 @@ class BusinessLogic:
             freq=pd.Timedelta(int(delay * 1e9)),
             inclusive="both"
         )
-        raw_data = [{'timestamp': date} for date in range(len(timestamps))]
-        processed_data = [{'timestamp': date} for date in range(len(timestamps))]
+        raw_data = [{'timestamp': date} for date in timestamps]
+        processed_data = [{'timestamp': date} for date in timestamps]
 
         for unfilled_elem in unfilled_data['data']:
             for i, value in enumerate(unfilled_elem['values']):
