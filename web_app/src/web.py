@@ -42,7 +42,7 @@ class WeatherApp:
             layout.header(),
             dcc.Interval(
                 id="interval-component",
-                interval=10000,  # в миллисекундах
+                interval=5000,  # в миллисекундах
                 n_intervals=0
             ),
             layout.charts(),

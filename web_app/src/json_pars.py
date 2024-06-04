@@ -14,7 +14,6 @@ def calculate_timestamps(start_timestamp: datetime, end_timestamp: datetime, del
     )
     return timestamps
 
-
 def parsing(data: dict) -> pd.DataFrame:
     delay = data["delay"]
     try:
@@ -50,7 +49,7 @@ def parsing(data: dict) -> pd.DataFrame:
 
     return df
 
-def add_data(new_data: dict, max_rows=50):
+def add_data(new_data: dict, max_rows=100):
     df = parsing(new_data)
     if len(df) >= max_rows:
         df = df.iloc[:max_rows]
@@ -110,7 +109,7 @@ def add_data(new_data: dict, max_rows=50):
     with open("response.json", "w") as f:
         json.dump(data_to_save, f, ensure_ascii=False, indent=4)
 
-def update_data(new_data: dict, max_rows=50):
+def update_data(new_data: dict, max_rows=100):
     with open("response.json", "r") as f:
             previous_data = json.load(f)
             previous_data_df = parsing(previous_data)
