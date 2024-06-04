@@ -1,5 +1,5 @@
 
-from src import back_consumer
+from src import BackConsumer
 import os
 from time import sleep
 
@@ -14,6 +14,7 @@ SYSTEM_2_BACKEND_QUEUE = os.environ["SYSTEM_2_BACKEND"]
 
 if __name__ == "__main__":
     sleep(10)
+    back_consumer = BackConsumer()
     channel = back_consumer.get_channel(RABBITMQ_DEFAULT_USER,
                                         RABBITMQ_DEFAULT_PASS,
                                         RABBITMQ_DEFAULT_SERVER_NAME,
