@@ -2,6 +2,7 @@ from dash import dcc
 from dash import html
 import dash.dash_table as dt
 
+
 def header():
     return html.Div(
         children=[
@@ -14,6 +15,7 @@ def header():
         ],
         className="header",
     )
+
 
 def charts():
     return html.Div(
@@ -43,6 +45,7 @@ def charts():
         ],
         className="wrapper",
     )
+
 
 def data_table():
     return html.Div(

@@ -23,9 +23,6 @@ def parsing(data: dict) -> pd.DataFrame:
         start_timestamp = datetime.strptime(data["timestamps"]["start"], "%Y-%m-%dT%H:%M")
         end_timestamp = datetime.strptime(data["timestamps"]["end"], "%Y-%m-%dT%H:%M")
     
-    # print(start_timestamp, end_timestamp)
-
-
     timestamps = calculate_timestamps(start_timestamp, end_timestamp, delay)
 
     data_before = {

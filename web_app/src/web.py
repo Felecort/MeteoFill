@@ -29,7 +29,8 @@ class WeatherApp:
                 "rel": "stylesheet",
             },
         ]
-        self.app = dash.Dash(__name__, external_stylesheets=self.external_stylesheets)
+        self.app = dash.Dash(__name__,
+                             external_stylesheets=self.external_stylesheets)
         self.app.title = "Данные метеостанции!"
 
         self.app.layout = self.create_layout()
@@ -61,7 +62,7 @@ class WeatherApp:
         @self.app.callback(*callback_args)
         def update_charts(n_intervals):
             if os.stat("response.json").st_size == 0:
-                return dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
+                return dash.no_update, dash.no_update, dash.no_update,dash.no_update, dash.no_update, dash.no_update
             else:
                 with open("response.json", "r") as f:
                     raw_json = json.load(f)
