@@ -3,3 +3,5 @@ __pycache__/
 .venv/
 .cache.sqlite
 .cache/
+.env_var
+

@@ -1,0 +1,14 @@
+.venv/
+.cache/
+.git/
+__pycache__/
+
+notebooks/
+
+*.pyc
+*.log
+
+.cache.sqlite
+.gitignore
+
+README.md
