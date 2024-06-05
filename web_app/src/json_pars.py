@@ -2,16 +2,16 @@ import json
 from datetime import datetime
 import pandas as pd
 
- # Описание метрик, которые нужно обработать
+# Описание датчиков для обработки
 metrics = [
-        {"name": "Температура", "id": "temperature_2m"},
-        {"name": "Относительная влажность", "id": "relative_humidity_2m"},
-        {"name": "Атмосферное давление", "id": "surface_pressure"},
-        {"name": "Скорость ветра", "id": "wind_speed_10m"},
-        {"name": "Направление ветра", "id": "wind_direction_10m"}
-    ]
+    {"name": "Температура", "id": "temperature_2m"},
+    {"name": "Относительная влажность", "id": "relative_humidity_2m"},
+    {"name": "Атмосферное давление", "id": "surface_pressure"},
+    {"name": "Скорость ветра", "id": "wind_speed_10m"},
+    {"name": "Направление ветра", "id": "wind_direction_10m"}
+]
 
-# Функция для расчета временных меток
+# Функция для вычисления временных меток
 def calculate_timestamps(start_timestamp: datetime, end_timestamp: datetime, delay: int) -> pd.DatetimeIndex:
     """
     Вычисляет временные метки между начальной и конечной с заданной задержкой.
@@ -27,13 +27,13 @@ def calculate_timestamps(start_timestamp: datetime, end_timestamp: datetime, del
     timestamps = pd.date_range(
         start=start_timestamp,
         end=end_timestamp,
-        freq=pd.Timedelta(int(delay * 1e9)),  # from nanoseconds to seconds
+        freq=pd.Timedelta(int(delay * 1e9)),
         inclusive="both"
     )
     return timestamps
 
 # Функция для парсинга данных из словаря в DataFrame
-def parsing_rabbit(data: dict):
+def parsing_rabbit(data: dict) -> pd.DataFrame:
     """
     Парсит данные из словаря в DataFrame.
 
@@ -56,10 +56,11 @@ def parsing_rabbit(data: dict):
     # Вычисляем временные метки
     timestamps = calculate_timestamps(start_timestamp, end_timestamp, delay)
 
-    df = parsing(data,timestamps)
+    df = parsing(data, timestamps)
 
     return df
 
+# Функция для парсинга данных из словаря в DataFrame
 def parsing_data(data: dict) -> pd.DataFrame:
     """
     Парсит данные из словаря в DataFrame.
@@ -73,14 +74,24 @@ def parsing_data(data: dict) -> pd.DataFrame:
     # Извлекаем временные метки
     timestamps = pd.to_datetime(data["timestamps"])
     
-    df = parsing(data,timestamps)
+    df = parsing(data, timestamps)
 
     return df
 
-def parsing (data: dict,timestamps:pd.DatetimeIndex) -> pd.DataFrame:
-    # Извлекаем данные до и после восстановления
-    data_before = {item["id"]+"_before": item["values"]["before"] for item in data["data"]}
-    data_after = {item["id"]+"_after": item["values"]["after"] for item in data["data"]}
+# Функция для извлечения и объединения данных
+def parsing(data: dict, timestamps: pd.DatetimeIndex) -> pd.DataFrame:
+    """
+    Извлекает данные до и после восстановления и объединяет их в DataFrame.
+
+    Args:
+        data (dict): Данные в формате словаря.
+        timestamps (pd.DatetimeIndex): Временные метки.
+
+    Returns:
+        pd.DataFrame: Объединенный DataFrame.
+    """
+    data_before = {item["id"] + "_before": item["values"]["before"] for item in data["data"]}
+    data_after = {item["id"] + "_after": item["values"]["after"] for item in data["data"]}
     data_time = {"time": timestamps}
 
     # Создаем DataFrame из извлеченных данных
@@ -90,9 +101,8 @@ def parsing (data: dict,timestamps:pd.DatetimeIndex) -> pd.DataFrame:
 
     # Объединяем все DataFrame
     df = pd.concat([df_time, df_before, df_after], axis=1)
-    print (df)
+    print(df)
     return df
-
 
 # Функция для добавления новых данных в JSON
 def add_data(new_data: dict, max_rows=100):
@@ -140,11 +150,16 @@ def update_data(new_data: dict, max_rows=100):
 
     save_json(df)
 
+# Функция для сохранения данных в JSON
+def save_json(df: pd.DataFrame):
+    """
+    Сохраняет DataFrame в JSON файл.
 
-def save_json(df:pd.DataFrame):
+    Args:
+        df (pd.DataFrame): DataFrame для сохранения.
+    """
     # Форматирование времени
     df['time'] = df['time'].dt.strftime('%Y-%m-%dT%H:%M')
-    
     
     # Создание структуры данных для сохранения
     data_to_save = {
