@@ -72,7 +72,7 @@ class WeatherApp:
                 with open("response.json", "r") as f:
                     raw_json = json.load(f)
                     if raw_json:
-                        self.data = json_pars.parsing(raw_json)
+                        self.data = json_pars.parsing_data(raw_json)
                     else:
                         return dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update    
 
