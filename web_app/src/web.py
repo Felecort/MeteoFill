@@ -72,7 +72,7 @@ class WeatherApp:
                 with open("response.json", "r") as f:
                     raw_json = json.load(f)
                     if raw_json:
-                        self.data = json_pars.parsing(raw_json)
+                        self.data = json_pars.parsing_data(raw_json)
                     else:
                         return dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update    
 
@@ -125,7 +125,7 @@ class WeatherApp:
 
     def run(self):
         # Запуск сервера Dash
-        self.app.run_server(host="0.0.0.0", debug=True)
+        self.app.run_server(host="0.0.0.0", debug=False)
 
 
 if __name__ == '__main__':
