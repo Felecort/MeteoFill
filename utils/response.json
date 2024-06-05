@@ -65,7 +65,7 @@
         },
         {
             "name": "Давление",
-            "id": "pressure", 
+            "id": "surface_pressure", 
             "values": 
             {
                 "before":
@@ -84,7 +84,7 @@
         },
         {
             "name": "Влажность",
-            "id": "humidity_2m", 
+            "id": "relative_humidity_2m", 
             "values": 
             {
                 "before":

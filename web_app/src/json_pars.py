@@ -90,6 +90,7 @@ def parsing (data: dict,timestamps:pd.DatetimeIndex) -> pd.DataFrame:
 
     # Объединяем все DataFrame
     df = pd.concat([df_time, df_before, df_after], axis=1)
+    print (df)
     return df
 
 
@@ -161,6 +162,7 @@ def save_json(df:pd.DataFrame):
                 "after": df[f'{metric["id"]}_after'].tolist()
             }
         }
+        data_to_save["data"].append(metric_data)
 
     # Сохраняем данные в JSON файл
     with open("response.json", "w") as f:
