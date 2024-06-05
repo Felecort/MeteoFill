@@ -32,7 +32,7 @@ class WeatherService:
         self.cache_session = requests_cache.CachedSession('.cache', expire_after=cache_expire_after)
         self.retry_session = retry(self.cache_session, retries=retries, backoff_factor=backoff_factor)
         self.openmeteo = openmeteo_requests.Client(session=self.retry_session)
-        self.original_data = None  # Хранение исходных данных
+        self.original_data = None 
 
     def get_weather_data(self, lat: float, lon: float, start_date: str, end_date: str):
         logging.info(f"Requesting weather data for lat={lat}, lon={lon}, start_date={start_date}, end_date={end_date}")
@@ -161,30 +161,13 @@ async def weather_data(request: WeatherRequest):
         weather_df_with_nan = create_nan(weather_df, prob=request.prob)  
         json_data = weather_df_with_nan.to_json(orient='split', date_format='iso')
         logging.info(f"Processed data successfully") 
-
+        return json.loads(json_data) 
+    
     except Exception as e:
         logging.error(f"Error processing request: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# @app.post("/rmse")
-# async def calculate_rmse(request: FilledWeatherData):
-#     try:
-#         logging.info(f"Received filled data for RMSE calculation for class {request.service_class}")
-#         filled_df = pd.read_json(json.dumps(request.data), orient='split')
-
-#         if request.service_class == "WeatherService":
-#             rmse_values = weather_service.calculate_rmse(filled_df)
-#         elif request.service_class == "CSVProcessor":
-#             csv_processor = CSVProcessor()
-#             rmse_values = csv_processor.calculate_rmse(filled_df)
-#         else:
-#             raise HTTPException(status_code=400, detail="Unknown service class")
-
-#         print(rmse_values)
-#     except Exception as e:
-#         logging.error(f"Error processing filled data: {e}")
-#         raise HTTPException(status_code=500, detail=str(e))
 @app.post("/rmse")
 async def calculate_rmse(request: FilledWeatherData):
     try:
