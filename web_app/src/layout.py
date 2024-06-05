@@ -2,6 +2,7 @@ from dash import dcc
 from dash import html
 import dash.dash_table as dt
 
+
 def header():
     return html.Div(
         children=[
@@ -14,6 +15,7 @@ def header():
         ],
         className="header",
     )
+
 
 def charts():
     return html.Div(
@@ -44,24 +46,21 @@ def charts():
         className="wrapper",
     )
 
+
 def data_table():
     return html.Div(
         children=dt.DataTable(
             id="data-table",
             columns=[
                 {"name": "Время", "id": "time"},
-                {"name": "Температура при получении", "id": "temperature_before"},
-                {"name": "Температура после обработки", "id": "temperature_after"},
-                {"name": "Давление при получении", "id": "pressure_before"},
-                {"name": "Давление после обработки", "id": "pressure_after"},
-                {"name": "Влажность при получении", "id": "humidity_before"},
-                {"name": "Влажность после обработки", "id": "humidity_after"},
-                {"name": "Скорость ветра при получении", "id": "wind_speed_before"},
-                {"name": "Скорость ветра после обработки", "id": "wind_speed_after"},
-                {"name": "Направление ветра при получении", "id": "wind_direction_before"},
-                {"name": "Направление ветра после обработки", "id": "wind_direction_after"},
+                {"name": "Температура", "id": "temperature"},
+                {"name": "Давление", "id": "pressure"},
+                {"name": "Влажность", "id": "humidity"},
+                {"name": "Скорость ветра", "id": "wind_speed"},
+                {"name": "Направление ветра", "id": "wind_direction"},
             ],
             style_cell={"textAlign": "center", "whiteSpace": "normal"},
         ),
-        className="table",
+        className="table-container",
     )
+

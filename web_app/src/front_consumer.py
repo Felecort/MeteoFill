@@ -1,6 +1,8 @@
 import pika
 import json
 from src import json_pars
+import os
+
 
 class FrontReceiver:
     def __init__(self, rabbitmq_user, rabbitmq_pass, rabbitmq_server_name, rabbitmq_queue):
@@ -23,7 +25,10 @@ class FrontReceiver:
         try:
             new_data = body.decode('utf-8')
             new_data = json.loads(new_data)
-            json_pars.update_data(new_data)
+            if os.stat("response.json").st_size == 0:
+                json_pars.add_data(new_data)
+            else: 
+                json_pars.update_data(new_data)
         except Exception as e:
             print(f"Error processing message: {e}")
 
