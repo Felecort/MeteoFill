@@ -1,4 +1,3 @@
-import os
 
 
 def edit_env_var(env_file, var_name, new_value):
