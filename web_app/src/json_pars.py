@@ -140,7 +140,7 @@ def update_data(new_data: dict, max_rows=100):
 
     # Объединение предыдущих и новых данных
     df = pd.concat([previous_data_df, new_data_df])
-    df = df.sort_values(by='time')
+    df = df.sort_values(by='time',ascending=False)
     df.drop_duplicates(subset=['time'], keep='last', inplace=True)
     df.reset_index(drop=True, inplace=True)
     
