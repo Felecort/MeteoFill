@@ -2,6 +2,8 @@ import time
 import json
 from threading import Thread, Event
 from typing import Tuple, Dict
+import requests
+
 import pandas as pd
 import pika
 
@@ -27,6 +29,8 @@ from src.db.db_logic import DatabaseManager
 
 class BusinessLogic:
     def __init__(self,
+                 meteostation_url: str,
+                 external_system_url: str,
                  request_frequency_sec: int,
                  rabbitmq_system_2_backend_queue: str,
                  rabbitmq_system_2_frontend_queue: str,
@@ -45,6 +49,8 @@ class BusinessLogic:
 
         self._db = DatabaseManager('postgres', 'postgres', 'mydb', port=5432)
 
+        self._meteostation_url = meteostation_url
+        self._external_system_url = external_system_url
         self._request_timeout = request_frequency_sec
         self._name_mapping = {
             'temperature_2m': 'Температура',
@@ -62,6 +68,9 @@ class BusinessLogic:
         self._consumer_thread.join(0)
 
         self._frontend_conn, self._system2frontend_channel = self.__set_frontend_connection()
+
+    def __convert_datetime_to_nanosec(self):
+        pass
 
     def __set_backend_connection(
             self, tries_num: int = 10
@@ -127,16 +136,14 @@ class BusinessLogic:
         backend2system_channel.start_consuming()
 
     def __get_weather_data(self):
-        data = get_weather()
+        data = requests.get(url=self._meteostation_url)
         data = self.__input_adapter(data)
         return data
 
     def __input_adapter(self, data):
-        # TODO: Реализовать адаптор
         return data
 
     def __output_adapter(self, data):
-        # TODO: Реализовать адаптор
         return data
 
     def __add_timeout(self, start_time):
@@ -235,8 +242,7 @@ class BusinessLogic:
 
     def __send_filled_data_to_external_system(self, filled_data: dict):
         filled_data = self.__output_adapter(filled_data)
-        # TODO: Реализовать отправку данных
-        pass
+        requests.post(url=self._external_system_url, data=filled_data)
 
     def run(self):
         start_time = time.time() - self._request_timeout - 1

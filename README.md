@@ -1,6 +1,6 @@
 # Система восстановления потерянных значений датчиков метеостанции
 ---
-![Static Badge](https://img.shields.io/badge/python-FFCF00?style=for-the-badge&logo=python) ![Static Badge](https://img.shields.io/badge/docker-AADBFF?style=for-the-badge&logo=docker) ![Static Badge](https://img.shields.io/badge/rabbitmq-9F00C6?style=for-the-badge&logo=rabbitmq) ![Static Badge](https://img.shields.io/badge/postgresql-909498?style=for-the-badge&logo=postgresql) ![Static Badge](https://img.shields.io/badge/json-151515?style=for-the-badge&logo=json) ![Static Badge](https://img.shields.io/badge/pandas-%23150458?style=for-the-badge&logo=pandas)
+![Static Badge](https://img.shields.io/badge/python-FFCF00?style=for-the-badge&logo=python) ![Static Badge](https://img.shields.io/badge/docker-AADBFF?style=for-the-badge&logo=docker) ![Static Badge](https://img.shields.io/badge/rabbitmq-9F00C6?style=for-the-badge&logo=rabbitmq) ![Static Badge](https://img.shields.io/badge/postgresql-909498?style=for-the-badge&logo=postgresql) 
 
 ---
 ## Описание предметной области
@@ -52,3 +52,8 @@
 3. Запустите программу Start.py
 ---
 ## Визуализация
+
+пример визуализации графика:
+![Визуализация восстановления данных](assets/screen_1.png)
+пример визуализации таблицы:
+![Визуализация восстановления данных](assets/screen_2.png)
