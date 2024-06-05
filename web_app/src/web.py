@@ -29,7 +29,8 @@ class WeatherApp:
                 "rel": "stylesheet",
             },
         ]
-        self.app = dash.Dash(__name__, external_stylesheets=self.external_stylesheets)
+        self.app = dash.Dash(__name__,
+                             external_stylesheets=self.external_stylesheets)
         self.app.title = "Данные метеостанции!"
 
         self.app.layout = self.create_layout()
@@ -42,7 +43,7 @@ class WeatherApp:
             layout.header(),
             dcc.Interval(
                 id="interval-component",
-                interval=20000,  # в миллисекундах
+                interval=5000,  # в миллисекундах
                 n_intervals=0
             ),
             layout.charts(),
@@ -61,7 +62,7 @@ class WeatherApp:
         @self.app.callback(*callback_args)
         def update_charts(n_intervals):
             if os.stat("response.json").st_size == 0:
-                return dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
+                return dash.no_update, dash.no_update, dash.no_update,dash.no_update, dash.no_update, dash.no_update
             else:
                 with open("response.json", "r") as f:
                     raw_json = json.load(f)
@@ -70,13 +71,15 @@ class WeatherApp:
                     else:
                         return dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update    
 
-            temp_chart = self.create_chart( name = "Температура", id_before = "temperature_2m_before",id_after = "temperature_2m_after")
-            pressure_chart = self.create_chart(name = "Атмосферное давление",id_before =  "surface_pressure_before",id_after = "surface_pressure_after")
-            humidity_chart = self.create_chart(name = "Относительная влажность",id_before =  "relative_humidity_2m_before",id_after = "relative_humidity_2m_after")
-            wind_speed_chart = self.create_chart(name = "Скорость ветра",id_before =  "wind_speed_10m_before",id_after = "wind_speed_10m_after")
-            wind_direction_chart = self.create_chart(name = "Направление ветра",id_before =  "wind_direction_10m_before",id_after = "wind_direction_10m_after")
+            temp_chart = self.create_chart(name="Температура", id_before="temperature_2m_before", id_after="temperature_2m_after")
+            pressure_chart = self.create_chart(name="Атмосферное давление", id_before="surface_pressure_before", id_after="surface_pressure_after")
+            humidity_chart = self.create_chart(name="Относительная влажность", id_before="relative_humidity_2m_before", id_after="relative_humidity_2m_after")
+            wind_speed_chart = self.create_chart(name="Скорость ветра", id_before="wind_speed_10m_before", id_after="wind_speed_10m_after")
+            wind_direction_chart = self.create_chart(name="Направление ветра", id_before="wind_direction_10m_before", id_after="wind_direction_10m_after")
 
-            return temp_chart, pressure_chart, humidity_chart, wind_speed_chart, wind_direction_chart, self.data.to_dict('records')
+            data_table = self.prepare_data_table()
+
+            return temp_chart, pressure_chart, humidity_chart, wind_speed_chart, wind_direction_chart, data_table
 
     def create_chart(self, name, id_before, id_after):
         temp_chart = go.Figure()
@@ -87,6 +90,29 @@ class WeatherApp:
             title=name
         )
         return temp_chart
+    
+    def prepare_data_table(self):
+        data_table = []
+
+        for index, row in self.data.iterrows():
+            data_table.append({
+                "time": row["time"],
+                "temperature": self.get_value(row["temperature_2m_before"], row["temperature_2m_after"]),
+                "pressure": self.get_value(row["surface_pressure_before"], row["surface_pressure_after"]),
+                "humidity": self.get_value(row["relative_humidity_2m_before"], row["relative_humidity_2m_after"]),
+                "wind_speed": self.get_value(row["wind_speed_10m_before"], row["wind_speed_10m_after"]),
+                "wind_direction": self.get_value(row["wind_direction_10m_before"], row["wind_direction_10m_after"]),
+            })
+
+        return data_table
+    
+    def get_value(self, before, after):
+        if pd.isna(before) and not pd.isna(after):
+            return f"NaN / {after}"
+        elif before == after:
+            return before
+        else:
+            return before if not pd.isna(before) else after
 
     def run(self):
         self.app.run_server(host="0.0.0.0", debug=True)

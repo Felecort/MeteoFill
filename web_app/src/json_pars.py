@@ -2,13 +2,6 @@ import pandas as pd
 import json
 from datetime import datetime
 
-name_mapping = {
-    'temperature_2m': 'Температура',
-    'relative_humidity_2m': 'Относительная влажность',
-    'surface_pressure': 'Атмосферное давление',
-    'wind_speed_10m': 'Скорость ветра',
-    'wind_direction_10m': 'Направление ветра'
-}
 
 # Функция для расчета временных меток
 def calculate_timestamps(start_timestamp: datetime, end_timestamp: datetime, delay: int) -> pd.DatetimeIndex:
@@ -21,7 +14,6 @@ def calculate_timestamps(start_timestamp: datetime, end_timestamp: datetime, del
     )
     return timestamps
 
-
 def parsing(data: dict) -> pd.DataFrame:
     delay = data["delay"]
     try:
@@ -31,9 +23,6 @@ def parsing(data: dict) -> pd.DataFrame:
         start_timestamp = datetime.strptime(data["timestamps"]["start"], "%Y-%m-%dT%H:%M")
         end_timestamp = datetime.strptime(data["timestamps"]["end"], "%Y-%m-%dT%H:%M")
     
-    # print(start_timestamp, end_timestamp)
-
-
     timestamps = calculate_timestamps(start_timestamp, end_timestamp, delay)
 
     data_before = {
@@ -57,7 +46,7 @@ def parsing(data: dict) -> pd.DataFrame:
 
     return df
 
-def add_data(new_data: dict, max_rows=50):
+def add_data(new_data: dict, max_rows=100):
     df = parsing(new_data)
     if len(df) >= max_rows:
         df = df.iloc[:max_rows]
@@ -117,7 +106,7 @@ def add_data(new_data: dict, max_rows=50):
     with open("response.json", "w") as f:
         json.dump(data_to_save, f, ensure_ascii=False, indent=4)
 
-def update_data(new_data: dict, max_rows=50):
+def update_data(new_data: dict, max_rows=100):
     with open("response.json", "r") as f:
             previous_data = json.load(f)
             previous_data_df = parsing(previous_data)
