@@ -143,7 +143,7 @@ class BusinessLogic:
         return data
 
     def __input_adapter(self, data):
-        return pd.read_json(json.loads(data))
+        return pd.read_json(json.loads(data.content))
 
     def calculate_timestamps(self, start_timestamp: datetime, end_timestamp: datetime, delay: int) -> pd.DatetimeIndex:
         timestamps = pd.date_range(
@@ -155,13 +155,13 @@ class BusinessLogic:
         )
         return timestamps
 
-    def __output_adapter(self, data):
-        json_data = json.loads(data)
+    def __output_adapter(self, json_data):
+        # json_data = json.loads(data)
         # pprint(json_data)
         # start_timestamp = datetime.fromisoformat(json_data["timestamps"]["start"])
-        start_timestamp = datetime.strptime(json_data["timestamps"]["start"], "%Y-%m-%dT%H:%M:%S.%f000")
+        start_timestamp = datetime.strptime(json_data["timestamps"]["start"], "%Y-%m-%dT%H:%M")
         # end_timestamp = datetime.fromisoformat(json_data["timestamps"]["end"])
-        end_timestamp = datetime.strptime(json_data["timestamps"]["end"], "%Y-%m-%dT%H:%M:%S.%f000")
+        end_timestamp = datetime.strptime(json_data["timestamps"]["end"], "%Y-%m-%dT%H:%M")
         delay = json_data["delay"]
         timestamps = self.calculate_timestamps(start_timestamp, end_timestamp, delay)
 

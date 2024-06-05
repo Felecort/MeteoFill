@@ -101,7 +101,6 @@ def parsing(data: dict, timestamps: pd.DatetimeIndex) -> pd.DataFrame:
 
     # Объединяем все DataFrame
     df = pd.concat([df_time, df_before, df_after], axis=1)
-    print(df)
     return df
 
 # Функция для добавления новых данных в JSON

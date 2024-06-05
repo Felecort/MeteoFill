@@ -87,7 +87,7 @@ class WeatherService:
     
 
 class CSVProcessor:
-    def __init__(self, csv_file_path=r'C:\Users\rusik\OneDrive\Опять Работа\Магамед\1 курс 2 сем\Проектировании ИИ\Курсовки\MeteoFill\test-system\data\weather_data.csv', skiprows=3, batch_size=100, prob=0.5):
+    def __init__(self, csv_file_path=r'C:\Users\rusik\OneDrive\Опять Работа\Магамед\1 курс 2 сем\Проектировании ИИ\Курсовки\MeteoFill\test-system\data\weather_data.csv', skiprows=3, batch_size=50, prob=0.5):
         self.skiprows = skiprows
         self.batch_size = batch_size
         self.prob = prob
@@ -106,8 +106,8 @@ class CSVProcessor:
             # time.sleep(2)
             data_with_nan = create_nan(self.df_data, prob=self.prob)
             data_without_nan = self.df_data
-            batches_with_nan = np.array_split(data_with_nan, self.batch_size)
-            batches_without_nan = np.array_split(data_without_nan, self.batch_size)
+            batches_with_nan = np.array_split(data_with_nan, math.ceil(len(self.df_data) / self.batch_size))
+            batches_without_nan = np.array_split(data_without_nan, math.ceil(len(self.df_data) / self.batch_size))
             return batches_with_nan, batches_without_nan
         except Exception as e:
             logging.error(f"Error processing CSV file in batches: {e}")
@@ -232,6 +232,7 @@ async def process_csv():
         if batch_index < len(batches):
             batch = batches[batch_index]
             batch_index += 1
+            # return json.dumps(batch.to_json(orient='split'))
             # return json.dumps(batch.to_json(orient='split'))
             return JSONResponse(content=batch.to_json())
         else:
