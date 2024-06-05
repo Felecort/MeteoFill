@@ -2,8 +2,13 @@ from dash import dcc
 from dash import html
 import dash.dash_table as dt
 
-
 def header():
+    """
+    Создает заголовок приложения с описанием.
+
+    Returns:
+        html.Div: Заголовок с эмодзи, названием и описанием приложения.
+    """
     return html.Div(
         children=[
             html.P(children="🌤️", className="header-emoji"),
@@ -16,8 +21,13 @@ def header():
         className="header",
     )
 
-
 def charts():
+    """
+    Создает графики для отображения данных метеостанции.
+
+    Returns:
+        html.Div: Контейнер с графиками для температуры, давления, влажности, скорости и направления ветра.
+    """
     return html.Div(
         children=[
             html.Div(
@@ -37,17 +47,20 @@ def charts():
                 className="card",
             ),
             html.Div(
-                children=dcc.Graph(
-                    id="wind-direction-chart", style={"marginTop": "30px"}
-                ),
+                children=dcc.Graph(id="wind-direction-chart", style={"marginTop": "30px"}),
                 className="card",
             ),
         ],
         className="wrapper",
     )
 
-
 def data_table():
+    """
+    Создает таблицу для отображения данных метеостанции.
+
+    Returns:
+        html.Div: Контейнер с таблицей, отображающей время, температуру, давление, влажность, скорость и направление ветра.
+    """
     return html.Div(
         children=dt.DataTable(
             id="data-table",
@@ -63,4 +76,3 @@ def data_table():
         ),
         className="table-container",
     )
-
