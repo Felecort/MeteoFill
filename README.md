@@ -1,9 +1,12 @@
 # Система восстановления потерянных значений датчиков метеостанции
+---
+![Static Badge](https://img.shields.io/badge/python-FFCF00?style=for-the-badge&logo=python) ![Static Badge](https://img.shields.io/badge/docker-AADBFF?style=for-the-badge&logo=docker) ![Static Badge](https://img.shields.io/badge/rabbitmq-9F00C6?style=for-the-badge&logo=rabbitmq) ![Static Badge](https://img.shields.io/badge/postgresql-909498?style=for-the-badge&logo=postgresql) ![Static Badge](https://img.shields.io/badge/json-151515?style=for-the-badge&logo=json) ![Static Badge](https://img.shields.io/badge/pandas-%23150458?style=for-the-badge&logo=pandas)
 
+---
 ## Описание предметной области
 
 ### Постановка задачи
-
+Описание предметной 
 1. Имеется метеостанция, которая содержит в себе датчики:
     1. температуры
     2. влажности воздуха
@@ -26,17 +29,31 @@
 ### Цель
 Восстанавливать не переданные значения.
 
+---
 ## Запуск проекта
 
-Для запуска проекта выполните следующие шаги:
+Разлчные способы запуска:
 
-1. код:
+1. Linux:
     ```bash
-    pip install -r requirements.txt
+    docker compose up --build
     ```
+    Для просмотра визуализации перейдите по: http://localhost:8050/.
 
+2. WSL:
+    ```powershell
+    wsl --distribution ubuntu-22.04
+    ```
+    ```bash
+    docker compose up --build
+    ```
+    Для просмотра визуализации перейдите по: http://localhost:8050/.
 
-### Визуализация
+3. Запустите программу Start.py
+---
+## Визуализация
 
-
-![Визуализация восстановления данных](https://www.notion.so/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F13b1dce0-9213-412d-8c52-5f79d780cc03%2F5210d68d-d47d-4c47-adef-eee5d662ff17%2FUntitled.png?table=block&id=e8af9783-a867-4ce0-8241-e7bf73094120&spaceId=13b1dce0-9213-412d-8c52-5f79d780cc03&width=2000&userId=843fdd05-1044-4e55-b883-75d712a8d568&cache=v2)
+пример визуализации графика:
+![Визуализация восстановления данных](assets/screen_1.png)
+пример визуализации таблицы:
+![Визуализация восстановления данных](assets/screen_2.png)
