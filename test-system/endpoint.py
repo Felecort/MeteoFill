@@ -1,12 +1,15 @@
+import math
+
 import openmeteo_requests
 import requests_cache
 import pandas as pd
 import numpy as np
 from retry_requests import retry
 from fastapi import FastAPI, HTTPException, UploadFile, File
+from fastapi.responses import JSONResponse
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, Any
 from datetime import date
 import logging
 import json
@@ -84,7 +87,7 @@ class WeatherService:
     
 
 class CSVProcessor:
-    def __init__(self, csv_file_path='data/weather_data.csv', skiprows=3, batch_size=100, prob=0.5):
+    def __init__(self, csv_file_path=r'C:\Users\rusik\OneDrive\Опять Работа\Магамед\1 курс 2 сем\Проектировании ИИ\Курсовки\MeteoFill\test-system\data\weather_data.csv', skiprows=3, batch_size=100, prob=0.5):
         self.skiprows = skiprows
         self.batch_size = batch_size
         self.prob = prob
@@ -95,19 +98,19 @@ class CSVProcessor:
     def process_csv_in_batches(self):
         try:
             logging.info("Processing CSV file in batches")
-
-            for start in range(0, len(self.df_data), self.batch_size):
-                batch = self.df_data.iloc[start:start + self.batch_size]
-                try:
-                    batch_with_nan = create_nan(batch, prob=self.prob)
-                    json_data = batch_with_nan.to_json(orient='split', date_format='iso')
-                    yield json.dumps({"message": "Received batch", "data": json.loads(json_data)}) + '\n'
-                    time.sleep(2)
-                except Exception as e:
-                    logging.error(f"Error processing batch starting from row {start}: {e}")
-                    continue
+            # batch_with_nan = create_nan(batch, prob=self.prob)
+            # # json_data = batch_with_nan.to_json(orient='split', date_format='iso')
+            # temp = json.dumps({"message": "Received batch", "data": list(batch_with_nan)})
+            # print(temp)
+            # yield temp
+            # time.sleep(2)
+            data_with_nan = create_nan(self.df_data, prob=self.prob)
+            data_without_nan = self.df_data
+            batches_with_nan = np.array_split(data_with_nan, self.batch_size)
+            batches_without_nan = np.array_split(data_without_nan, self.batch_size)
+            return batches_with_nan, batches_without_nan
         except Exception as e:
-            logging.error(f"Error processing CSV file: {e}")
+            logging.error(f"Error processing CSV file in batches: {e}")
             raise HTTPException(status_code=500, detail=str(e))
         
     def calculate_rmse(self, filled_df: pd.DataFrame, start: int):
@@ -125,82 +128,117 @@ class CSVProcessor:
         time.sleep(2)
         logging.info("RMSE calculation completed")
         return pd.Series(rmse_values, index=numeric_columns)
- 
-
-        
     
 
-# WeatherRequest: Это модель Pydantic, представляющая структуру запроса,
-# ожидаемого конечной точкой /weather-data. Она включает широту, долготу
-# начальную дату, конечную дату и необязательную вероятность.
-class WeatherRequest(BaseModel):
-    latitude: float
-    longitude: float
-    start_date: date
-    end_date: date
-    prob: Optional[float] = 0.5
+# # WeatherRequest: Это модель Pydantic, представляющая структуру запроса,
+# # ожидаемого конечной точкой /weather-data. Она включает широту, долготу
+# # начальную дату, конечную дату и необязательную вероятность.
+# class WeatherRequest(BaseModel):
+#     latitude: float
+#     longitude: float
+#     start_date: date
+#     end_date: date
+#     prob: Optional[float] = 0.5
+#
+# # Модель для принятия заполненных данных
+# class FilledWeatherData(BaseModel):
+#     data: dict
+#     service_class: str
+#     start: int
+#
+# # Инициализируем объект WeatherService
+# weather_service = WeatherService()
+# #csv_processor = CSVProcessor()
+# # /weather-data: ожидает объект WeatherRequest
+# # в теле запроса. Она извлекает данные о погоде на основе предоставленных параметров,
+# # добавляет к ним значения NaN, преобразует их в JSON и возвращает в ответе.
+# # Если при обработке возникает ошибка, он вызывает HTTPException с кодом состояния 500.
+# @app.post("/weather-data")
+# async def weather_data(request: WeatherRequest):
+#     try:
+#         logging.info(f"Received request: {request}")
+#         weather_df = weather_service.get_weather_data(request.latitude, request.longitude, str(request.start_date), str(request.end_date))
+#         weather_df_with_nan = create_nan(weather_df, prob=request.prob)
+#         json_data = weather_df_with_nan.to_json(orient='split', date_format='iso')
+#         logging.info(f"Processed data successfully")
+#         return json.loads(json_data)
+#
+#     except Exception as e:
+#         logging.error(f"Error processing request: {e}")
+#         raise HTTPException(status_code=500, detail=str(e))
 
-# Модель для принятия заполненных данных
-class FilledWeatherData(BaseModel):
-    data: dict
-    service_class: str
-    start: int
 
-# Инициализируем объект WeatherService
-weather_service = WeatherService()
-#csv_processor = CSVProcessor()
-# /weather-data: ожидает объект WeatherRequest 
-# в теле запроса. Она извлекает данные о погоде на основе предоставленных параметров,
-# добавляет к ним значения NaN, преобразует их в JSON и возвращает в ответе. 
-# Если при обработке возникает ошибка, он вызывает HTTPException с кодом состояния 500.
-@app.post("/weather-data")
-async def weather_data(request: WeatherRequest):
-    try:
-        logging.info(f"Received request: {request}")
-        weather_df = weather_service.get_weather_data(request.latitude, request.longitude, str(request.start_date), str(request.end_date))
-        weather_df_with_nan = create_nan(weather_df, prob=request.prob)  
-        json_data = weather_df_with_nan.to_json(orient='split', date_format='iso')
-        logging.info(f"Processed data successfully") 
-        return json.loads(json_data) 
-    
-    except Exception as e:
-        logging.error(f"Error processing request: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
-
+class Weather(BaseModel):
+    columns: list[str]
+    index: list[int]
+    data: list[list]
 
 @app.post("/rmse")
-async def calculate_rmse(request: FilledWeatherData):
-    try:
-        logging.info(f"Received filled data for RMSE calculation for class {request.service_class}")
-        filled_df = pd.read_json(json.dumps(request.data), orient='split')
+async def calculate_rmse(request: Weather):
+    # try:
+    global batch_index
+    global true_batches
+    logging.info("RMSE calculation started")
+    # json_data = json.loads(request)
+    # logging.info(json_data)
 
-        if request.service_class == "WeatherService":
-            rmse_values = weather_service.calculate_rmse(filled_df)
-        elif request.service_class == "CSVProcessor":
-            csv_processor = CSVProcessor()
-            rmse_values = csv_processor.calculate_rmse(filled_df, start=request.start)
-        else:
-            raise HTTPException(status_code=400, detail="Unknown service class")
+    # filled_batch = pd.read_json(json.dumps(request.body))
+    filled_batch = pd.read_json(request.json(), orient='split')
+    true_batch = true_batches[batch_index-1]
+    numeric_columns = true_batch.select_dtypes(include=np.number).columns
+    rmse_values = [np.sqrt(mean_squared_error(true_batch[column], filled_batch[column])) for column in numeric_columns]
 
-        print(rmse_values)
-    except Exception as e:
-        logging.error(f"Error processing filled data: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+    print(rmse_values)
 
-@app.post("/process-csv")
+    logging.info(rmse_values)
+    logging.info("RMSE calculation completed")
+    return pd.Series(rmse_values, index=numeric_columns)
+    # except:
+    #     logging.info('Миша, все хуйня. Давай по-новой.')
+
+# @app.post("/rmsse")
+# async def calculate_rmse(request: FilledWeatherData):
+#     try:
+#         logging.info(f"Received filled data for RMSE calculation for class {request.service_class}")
+#         filled_df = pd.read_json(json.dumps(request.data), orient='split')
+#
+#         if request.service_class == "WeatherService":
+#             rmse_values = weather_service.calculate_rmse(filled_df)
+#         elif request.service_class == "CSVProcessor":
+#             csv_processor = CSVProcessor()
+#             rmse_values = csv_processor.calculate_rmse(filled_df, start=request.start)
+#         else:
+#             raise HTTPException(status_code=400, detail="Unknown service class")
+#
+#         print(rmse_values)
+#     except Exception as e:
+#         logging.error(f"Error processing filled data: {e}")
+#         raise HTTPException(status_code=500, detail=str(e))
+
+
+csv_processor2 = CSVProcessor()
+batches, true_batches = csv_processor2.process_csv_in_batches()
+batch_index = 0
+
+@app.get("/process-csv")
 async def process_csv():
     try:
-        csv_processor2 = CSVProcessor()
-
-        response = StreamingResponse(
-            csv_processor2.process_csv_in_batches(),
-            media_type="application/json"
-        )
-        return response
+        global batches
+        global batch_index
+        # response = StreamingResponse(
+        #     batch,
+        #     media_type="application/json"
+        # )
+        if batch_index < len(batches):
+            batch = batches[batch_index]
+            batch_index += 1
+            # return json.dumps(batch.to_json(orient='split'))
+            return JSONResponse(content=batch.to_json())
+        else:
+            return {"message": "Все батчи были отправлены"}
     except Exception as e:
         logging.error(f"Error processing CSV file: {e}")
         raise HTTPException(status_code=500, detail=str(e))
-
 
 
 if __name__ == '__main__':

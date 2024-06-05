@@ -1,5 +1,6 @@
 import time
 import json
+from datetime import datetime
 from threading import Thread, Event
 from typing import Tuple, Dict
 import requests
@@ -137,14 +138,41 @@ class BusinessLogic:
 
     def __get_weather_data(self):
         data = requests.get(url=self._meteostation_url)
+        # data = get_weather()
         data = self.__input_adapter(data)
         return data
 
     def __input_adapter(self, data):
-        return data
+        return pd.read_json(json.loads(data))
+
+    def calculate_timestamps(self, start_timestamp: datetime, end_timestamp: datetime, delay: int) -> pd.DatetimeIndex:
+        timestamps = pd.date_range(
+            start=start_timestamp,
+            end=end_timestamp,
+            # from nanoseconds to seconds
+            freq=pd.Timedelta(int(delay * 1e9)),
+            inclusive="both"
+        )
+        return timestamps
 
     def __output_adapter(self, data):
-        return data
+        json_data = json.loads(data)
+        # pprint(json_data)
+        # start_timestamp = datetime.fromisoformat(json_data["timestamps"]["start"])
+        start_timestamp = datetime.strptime(json_data["timestamps"]["start"], "%Y-%m-%dT%H:%M:%S.%f000")
+        # end_timestamp = datetime.fromisoformat(json_data["timestamps"]["end"])
+        end_timestamp = datetime.strptime(json_data["timestamps"]["end"], "%Y-%m-%dT%H:%M:%S.%f000")
+        delay = json_data["delay"]
+        timestamps = self.calculate_timestamps(start_timestamp, end_timestamp, delay)
+
+        data = {
+            json_data["data"][i]["id"]: json_data["data"][i]["values"] for i in range(len(json_data["data"]))
+        }
+        data["date"] = timestamps
+
+        df = pd.DataFrame(data)
+        df.set_index("date", drop=True, inplace=True)
+        return df
 
     def __add_timeout(self, start_time):
         now = time.time()
@@ -242,7 +270,7 @@ class BusinessLogic:
 
     def __send_filled_data_to_external_system(self, filled_data: dict):
         filled_data = self.__output_adapter(filled_data)
-        requests.post(url=self._external_system_url, data=filled_data)
+        requests.post(url=self._external_system_url, data=filled_data.to_json(orient='split'))
 
     def run(self):
         start_time = time.time() - self._request_timeout - 1

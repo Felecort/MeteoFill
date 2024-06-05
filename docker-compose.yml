@@ -5,8 +5,8 @@ services:
     build:
       context: ./control-system
       dockerfile: Dockerfile
-    # ports:
-    #   -  "8000:8000"
+    ports:
+       -  "8092:8092"
     depends_on:
       - postgres
       - rabbitmq
