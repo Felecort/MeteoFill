@@ -19,6 +19,7 @@ import time
 from copy import deepcopy
 
 app = FastAPI()
+print("RUN ENDPOINT")
 
 logging.basicConfig(level=logging.INFO)
 
@@ -219,6 +220,7 @@ async def calculate_rmse(request: Weather):
 csv_processor2 = CSVProcessor()
 batches, true_batches = csv_processor2.process_csv_in_batches()
 batch_index = 0
+print("RUN ENDPOINT 2")
 
 @app.get("/process-csv")
 async def process_csv():
@@ -245,3 +247,5 @@ async def process_csv():
 if __name__ == '__main__':
     import uvicorn
     uvicorn.run(app, host='0.0.0.0', port=8092)
+    print("RUN ENDPOINT 3")
+
