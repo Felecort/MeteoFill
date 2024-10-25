@@ -137,7 +137,6 @@ class BusinessLogic:
         backend2system_channel.start_consuming()
 
     def __get_weather_data(self):
-        print("\n\n\n\n\n", self._meteostation_url, "\n\n\n\n\n")
         data = requests.get(url=self._meteostation_url)
         # data = get_weather()
         data = self.__input_adapter(data)
