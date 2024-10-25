@@ -88,7 +88,7 @@ class WeatherService:
     
 
 class CSVProcessor:
-    def __init__(self, csv_file_path=r'C:\Meteo\MeteoFill\test-system\data\weather_data.csv', skiprows=3, batch_size=10, prob=0.5):
+    def __init__(self, csv_file_path=r'./data/weather_data.csv', skiprows=3, batch_size=10, prob=0.5):
         self.skiprows = skiprows
         self.batch_size = batch_size
         self.prob = prob
