@@ -70,4 +70,3 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
-      RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: -rabbit log [{file,[{file,\"/var/log/rabbitmq/error.log\"},{level,error},{date,\"$D0\"},{size,10485760},{count,3}]},{console,[{enabled,false}]}]
