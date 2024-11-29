@@ -1,13 +1,37 @@
 from src import BusinessLogic
 from time import sleep
 import os
-import socket
+import requests
 
 
-s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-s.connect(("8.8.8.8", 80))
-ip_address = s.getsockname()[0]
-s.close()
+# Function to test connection
+def check_connection(ip):
+    try:
+        # Sending a GET request with a timeout
+        requests.get(f"http://{ip}:8092/", timeout=5)
+        return ip
+    except requests.exceptions.RequestException as e:
+        # Handle exceptions gracefully
+        return None
+
+
+def get_current_ip():
+    import socket
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    tmp_ip = s.getsockname()[0]
+    s.close()
+    return tmp_ip
+
+IPS = [
+    "localhost", 
+    "host.docker.internal",
+    "127.0.0.1",
+    get_current_ip(),
+]
+
+results = [valid_ip for ip in IPS if (valid_ip := check_connection(ip)) is not None]
+ip_address = results[0]
 
 
 RABBITMQ_LOCATION = os.environ["RABBITMQ_DEFAULT_LOCATION"]
