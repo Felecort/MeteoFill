@@ -21,18 +21,20 @@ def get_current_ip():
     s.connect(("8.8.8.8", 80))
     tmp_ip = s.getsockname()[0]
     s.close()
+    print(tmp_ip)
     return tmp_ip
 
 IPS = [
     "localhost", 
     "host.docker.internal",
     "127.0.0.1",
+    '192.168.199.111',
     get_current_ip(),
 ]
 
 results = [valid_ip for ip in IPS if (valid_ip := check_connection(ip)) is not None]
 ip_address = results[0]
-
+# ip_address = '192.168.199.111'
 
 RABBITMQ_LOCATION = os.environ["RABBITMQ_DEFAULT_LOCATION"]
 RABBITMQ_DEFAULT_USER = os.environ["RABBITMQ_DEFAULT_USER"]
