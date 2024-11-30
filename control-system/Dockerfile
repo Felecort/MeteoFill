@@ -5,7 +5,7 @@ COPY requirements.txt .
 RUN apt-get update && apt-get install -y libpq-dev build-essential
 
 RUN pip install --no-cache-dir -r requirements.txt
-RUN apt-get update && apt-get install -y --no-install-recommends tree
+# RUN apt-get update && apt-get install -y --no-install-recommends tree
 
 COPY . ./control-system
 WORKDIR /control-system
