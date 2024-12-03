@@ -1,0 +1,53 @@
+version: '3'
+
+services:
+  control-system:
+    image: meteofill_app/control_system:latest
+    depends_on:
+      - postgres
+      - rabbitmq
+      - web_app
+      - backend
+    env_file:
+      - .env
+
+
+  backend:
+    image: meteofill_app/backend:latest
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+      - rabbitmq
+
+
+  web_app:
+    image: meteofill_app/web_app:latest
+    ports:
+      - "8050:8050"
+    depends_on:
+      - postgres
+      - rabbitmq
+    env_file:
+      - .env
+
+
+  postgres:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mydb
+
+
+  rabbitmq:
+    # image: rabbitmq:latest
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
