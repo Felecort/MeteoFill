@@ -29,6 +29,7 @@ IPS = [
     "host.docker.internal",
     "127.0.0.1",
     '192.168.199.111',
+    '192.168.199.66',
     get_current_ip(),
 ]
 
